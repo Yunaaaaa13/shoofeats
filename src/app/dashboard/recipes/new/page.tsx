@@ -149,13 +149,13 @@ export default function AddRecipePage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto pb-24">
+    <div className="max-w-4xl mx-auto pb-24 px-4 lg:px-0">
       {/* Header & Progress */}
-      <div className="mb-10">
-        <Link href="/dashboard/recipes" className="inline-flex items-center gap-2 text-gray-500 hover:text-[#F05A00] font-bold mb-6 transition-colors">
+      <div className="mb-8 md:mb-10">
+        <Link href="/dashboard/recipes" className="inline-flex items-center gap-2 text-gray-500 hover:text-[#F05A00] font-bold mb-4 md:mb-6 transition-colors">
           <ArrowLeft className="size-4" /> Back to recipes
         </Link>
-        <h2 className={`${syneFont} text-4xl font-bold text-[#2A120A] mb-8`}>Create New Recipe</h2>
+        <h2 className={`${syneFont} text-3xl md:text-4xl font-bold text-[#2A120A] mb-6 md:mb-8`}>Create New Recipe</h2>
         
         {/* Progress Bar */}
         <div className="flex items-center justify-between relative">
@@ -176,17 +176,17 @@ export default function AddRecipePage() {
             </div>
           ))}
         </div>
-        <div className="flex justify-between mt-3 text-xs font-bold text-gray-400 uppercase tracking-wider">
-          <span className={step >= 1 ? "text-[#F05A00]" : ""}>Basic</span>
-          <span className={step >= 2 ? "text-[#F05A00]" : ""}>Ingredients</span>
-          <span className={step >= 3 ? "text-[#F05A00]" : ""}>Steps</span>
-          <span className={step >= 4 ? "text-[#F05A00]" : ""}>Details</span>
-          <span className={step >= 5 ? "text-[#F05A00]" : ""}>Preview</span>
+        <div className="flex justify-between mt-3 text-[9px] sm:text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider text-center">
+          <span className={`w-10 ${step >= 1 ? "text-[#F05A00]" : ""}`}>Basic</span>
+          <span className={`w-10 ${step >= 2 ? "text-[#F05A00]" : ""}`}>Ingred.</span>
+          <span className={`w-10 ${step >= 3 ? "text-[#F05A00]" : ""}`}>Steps</span>
+          <span className={`w-10 ${step >= 4 ? "text-[#F05A00]" : ""}`}>Details</span>
+          <span className={`w-10 ${step >= 5 ? "text-[#F05A00]" : ""}`}>Preview</span>
         </div>
       </div>
 
       {/* Form Container */}
-      <div className="bg-white rounded-[2rem] p-8 md:p-12 shadow-sm border border-gray-100 min-h-[500px] relative">
+      <div className="bg-white rounded-[2rem] p-6 md:p-8 lg:p-12 shadow-sm border border-gray-100 min-h-[500px] relative">
         <AnimatePresence mode="wait">
           
           {/* STEP 1: Basic Info */}
@@ -447,7 +447,7 @@ export default function AddRecipePage() {
                 </div>
               </div>
 
-              <div className="mt-10 flex gap-4">
+              <div className="mt-10 flex flex-col sm:flex-row gap-4">
                 <button 
                   onClick={() => submitRecipe("Draft")} 
                   disabled={isSubmitting}
@@ -474,15 +474,16 @@ export default function AddRecipePage() {
           <button 
             onClick={prevStep}
             disabled={step === 1}
-            className="px-8 py-4 rounded-xl font-bold text-gray-500 hover:bg-gray-100 disabled:opacity-0 transition-colors"
+            className="px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold text-gray-500 hover:bg-gray-100 disabled:opacity-0 transition-colors"
           >
             Back
           </button>
+          
           <button 
             onClick={nextStep}
-            className="bg-[#2A120A] text-white px-10 py-4 rounded-xl font-bold shadow-lg hover:bg-[#1a0a05] transition-colors flex items-center gap-2"
+            className="bg-[#2A120A] text-white px-8 md:px-10 py-3 md:py-4 rounded-xl font-bold shadow-lg shadow-[#2A120A]/20 hover:bg-[#1a0a05] transition-colors flex items-center gap-2"
           >
-            Next Step <ArrowRight className="size-5" />
+            Next <ArrowRight className="size-4" />
           </button>
         </div>
       )}

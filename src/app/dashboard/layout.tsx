@@ -183,7 +183,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Main Content */}
       <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden">
-        <header className="h-20 bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-30 flex items-center justify-between px-8 lg:px-12">
+        <header className="h-20 bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-30 flex items-center justify-between pl-16 pr-4 md:px-8 lg:px-12">
           <div className="hidden md:block">
             <h1 className="font-[family-name:var(--font-syne)] text-xl font-bold text-[#2A120A]">
               Personal Workspace
@@ -201,7 +201,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-6 lg:p-12">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-12 pb-24">
           <div className="max-w-6xl mx-auto">
             {children}
           </div>

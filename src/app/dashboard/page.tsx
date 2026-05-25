@@ -76,29 +76,29 @@ export default function DashboardOverview() {
   ];
 
   return (
-    <div className="space-y-12 pb-12">
+    <div className="space-y-8 md:space-y-12 pb-12">
       
       {/* Section A: Welcome Hero */}
       <motion.section 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-[#2A120A] rounded-[2.5rem] p-10 lg:p-14 text-white relative overflow-hidden shadow-2xl"
+        className="bg-[#2A120A] rounded-[2rem] md:rounded-[2.5rem] p-8 md:p-10 lg:p-14 text-white relative overflow-hidden shadow-xl md:shadow-2xl"
       >
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#F05A00] blur-[120px] rounded-full opacity-20 pointer-events-none translate-x-1/2 -translate-y-1/2"></div>
         
         <div className="relative z-10 max-w-2xl">
-          <h2 className={`${syneFont} text-4xl lg:text-5xl font-bold mb-4`}>
+          <h2 className={`${syneFont} text-3xl md:text-4xl lg:text-5xl font-bold mb-4`}>
             Good Evening, {userProfile?.full_name || userProfile?.username || 'Chef'} 👋
           </h2>
-          <p className="text-xl text-gray-300 mb-10 leading-relaxed font-medium">
+          <p className="text-lg md:text-xl text-gray-300 mb-8 md:mb-10 leading-relaxed font-medium">
             You've created <span className="text-white font-bold">{recipeCount} recipes</span>.<br/>
             Keep building your personal cookbook.
           </p>
-          <div className="flex flex-wrap gap-4">
-            <Link href="/dashboard/recipes/new" className="bg-[#F05A00] text-white px-8 py-3.5 rounded-full font-bold shadow-lg shadow-[#F05A00]/30 hover:bg-[#d94f00] transition-colors">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link href="/dashboard/recipes/new" className="bg-[#F05A00] text-white px-8 py-3.5 rounded-full font-bold shadow-lg shadow-[#F05A00]/30 hover:bg-[#d94f00] transition-colors text-center w-full sm:w-auto">
               Add Recipe
             </Link>
-            <Link href="/dashboard/community" className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-3.5 rounded-full font-bold hover:bg-white/20 transition-colors">
+            <Link href="/dashboard/community" className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-3.5 rounded-full font-bold hover:bg-white/20 transition-colors text-center w-full sm:w-auto">
               Explore Community
             </Link>
           </div>
@@ -106,29 +106,29 @@ export default function DashboardOverview() {
       </motion.section>
 
       {/* Section B: Stats Cards */}
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {stats.map((stat, i) => (
           <motion.div 
             key={stat.label}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 * i }}
-            className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex items-start gap-4 hover:shadow-md transition-shadow"
+            className="bg-white p-5 md:p-6 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4 hover:shadow-md transition-shadow"
           >
             <div className={`p-3 rounded-2xl ${stat.bg}`}>
               <stat.icon className={`size-6 ${stat.color}`} />
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-400 mb-1">{stat.label}</p>
-              <p className={`${syneFont} text-2xl font-bold text-[#2A120A]`}>{stat.value}</p>
+              <p className="text-xs md:text-sm font-bold text-gray-400 mb-1">{stat.label}</p>
+              <p className={`${syneFont} text-xl md:text-2xl font-bold text-[#2A120A]`}>{stat.value}</p>
             </div>
           </motion.div>
         ))}
       </section>
 
-      <div className="grid lg:grid-cols-3 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
         {/* Left Column (Wider) */}
-        <div className="lg:col-span-2 space-y-12">
+        <div className="lg:col-span-2 space-y-8 md:space-y-12">
           
           {/* Section C: Recently Added Recipes */}
           <section>

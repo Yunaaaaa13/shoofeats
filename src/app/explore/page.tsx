@@ -55,26 +55,26 @@ export default function ExplorePage() {
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto px-6 py-12 space-y-16">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-12 space-y-12 md:space-y-16">
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
-          <div className="inline-flex items-center gap-2 bg-[#F8F4EC] text-[#F05A00] px-4 py-2 rounded-full text-sm font-bold mb-6">
+          <div className="inline-flex items-center gap-2 bg-[#F8F4EC] text-[#F05A00] px-4 py-2 rounded-full text-xs md:text-sm font-bold mb-4 md:mb-6">
             <Compass className="size-4" /> Explore ShoofEats
           </div>
-          <h1 className={`${syneFont} text-5xl lg:text-7xl font-black text-[#2A120A] mb-6 leading-tight`}>
+          <h1 className={`${syneFont} text-4xl md:text-5xl lg:text-7xl font-black text-[#2A120A] mb-4 md:mb-6 leading-tight`}>
             Discover Amazing<br /><span className="text-[#F05A00]">Recipes & Creators</span>
           </h1>
-          <p className="text-xl text-gray-500 max-w-xl mx-auto mb-8 font-medium">Find your next favorite meal and the chef who makes it.</p>
+          <p className="text-lg md:text-xl text-gray-500 max-w-xl mx-auto mb-6 md:mb-8 font-medium px-4">Find your next favorite meal and the chef who makes it.</p>
           
           {/* Search */}
-          <div className="relative max-w-2xl mx-auto">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 size-5 text-gray-400" />
+          <div className="relative max-w-2xl mx-auto px-4 md:px-0">
+            <Search className="absolute left-8 md:left-6 top-1/2 -translate-y-1/2 size-5 text-gray-400" />
             <input
               type="text"
               placeholder="Search recipes, creators, categories..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full bg-white border border-gray-200 rounded-2xl py-5 pl-14 pr-6 outline-none focus:ring-2 focus:ring-[#F05A00]/30 focus:border-[#F05A00] transition-all font-medium text-[#2A120A] shadow-lg text-lg"
+              className="w-full bg-white border border-gray-200 rounded-2xl py-4 md:py-5 pl-12 md:pl-14 pr-4 md:pr-6 outline-none focus:ring-2 focus:ring-[#F05A00]/30 focus:border-[#F05A00] transition-all font-medium text-[#2A120A] shadow-lg text-base md:text-lg"
             />
           </div>
         </motion.div>
@@ -82,18 +82,18 @@ export default function ExplorePage() {
         {/* Trending Creators */}
         {!search && (
           <section>
-            <div className="flex items-center justify-between mb-8">
-              <h2 className={`${syneFont} text-3xl font-bold text-[#2A120A] flex items-center gap-3`}>
-                <Users className="size-7 text-[#F05A00]" /> Top Creators
+            <div className="flex items-center justify-between mb-6 md:mb-8 px-4 md:px-0">
+              <h2 className={`${syneFont} text-2xl md:text-3xl font-bold text-[#2A120A] flex items-center gap-3`}>
+                <Users className="size-6 md:size-7 text-[#F05A00]" /> Top Creators
               </h2>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 px-4 md:px-0">
               {creators.map((creator, i) => (
                 <motion.div key={creator.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                  <Link href={`/profile/${creator.username || creator.id}`} className="bg-white border border-gray-100 rounded-2xl p-5 flex flex-col items-center text-center hover:shadow-md hover:border-[#F05A00]/30 transition-all block group">
-                    <img src={creator.avatar_url} alt={creator.full_name} className="w-16 h-16 rounded-full border-2 border-[#F8F4EC] mb-3 object-cover bg-white group-hover:border-[#F05A00] transition-colors" />
-                    <p className="font-bold text-[#2A120A] text-sm truncate w-full">{creator.full_name || creator.username}</p>
-                    <p className="text-xs text-gray-400 font-semibold">@{creator.username}</p>
+                  <Link href={`/profile/${creator.username || creator.id}`} className="bg-white border border-gray-100 rounded-2xl p-4 md:p-5 flex flex-col items-center text-center hover:shadow-md hover:border-[#F05A00]/30 transition-all block group">
+                    <img src={creator.avatar_url} alt={creator.full_name} className="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-[#F8F4EC] mb-2 md:mb-3 object-cover bg-white group-hover:border-[#F05A00] transition-colors" />
+                    <p className="font-bold text-[#2A120A] text-xs md:text-sm truncate w-full">{creator.full_name || creator.username}</p>
+                    <p className="text-[10px] md:text-xs text-gray-400 font-semibold">@{creator.username}</p>
                   </Link>
                 </motion.div>
               ))}
@@ -103,15 +103,15 @@ export default function ExplorePage() {
 
         {/* Recipes */}
         <section>
-          <div className="flex items-center justify-between mb-8">
-            <h2 className={`${syneFont} text-3xl font-bold text-[#2A120A] flex items-center gap-3`}>
-              <TrendingUp className="size-7 text-[#F05A00]" />
+          <div className="flex items-center justify-between mb-6 md:mb-8 px-4 md:px-0">
+            <h2 className={`${syneFont} text-2xl md:text-3xl font-bold text-[#2A120A] flex items-center gap-3`}>
+              <TrendingUp className="size-6 md:size-7 text-[#F05A00]" />
               {search ? `Results for "${search}"` : "Trending Recipes"}
             </h2>
           </div>
 
           {isLoading ? (
-            <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 px-4 md:px-0">
               {[...Array(8)].map((_, i) => (
                 <div key={i} className="bg-white rounded-2xl overflow-hidden animate-pulse">
                   <div className="aspect-[4/3] bg-gray-100" />
@@ -123,7 +123,7 @@ export default function ExplorePage() {
               ))}
             </div>
           ) : filteredRecipes.length > 0 ? (
-            <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 px-4 md:px-0">
               {filteredRecipes.map((recipe, i) => (
                 <motion.div
                   key={recipe.id}
@@ -164,12 +164,12 @@ export default function ExplorePage() {
         </section>
 
         {/* CTA */}
-        <section className="bg-[#2A120A] rounded-[2.5rem] p-12 text-center text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#F05A00]/20 blur-[100px] rounded-full pointer-events-none" />
-          <h2 className={`${syneFont} text-4xl font-bold mb-4`}>Ready to share your recipes?</h2>
-          <p className="text-gray-300 text-lg mb-8 max-w-md mx-auto">Join thousands of food creators on ShoofEats and build your culinary community.</p>
-          <Link href="/register" className="inline-flex items-center gap-2 bg-[#F05A00] text-white px-10 py-4 rounded-full font-bold shadow-lg shadow-[#F05A00]/30 hover:bg-[#d94f00] hover:scale-105 transition-all text-lg">
-            Get Started — Free <ArrowRight className="size-5" />
+        <section className="bg-[#2A120A] rounded-[2rem] md:rounded-[2.5rem] p-8 md:p-12 text-center text-white relative overflow-hidden mx-4 md:mx-0">
+          <div className="absolute top-0 right-0 w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-[#F05A00]/20 blur-[80px] md:blur-[100px] rounded-full pointer-events-none" />
+          <h2 className={`${syneFont} text-3xl md:text-4xl font-bold mb-4`}>Ready to share your recipes?</h2>
+          <p className="text-gray-300 text-base md:text-lg mb-8 max-w-md mx-auto">Join thousands of food creators on ShoofEats and build your culinary community.</p>
+          <Link href="/register" className="inline-flex items-center gap-2 bg-[#F05A00] text-white px-8 md:px-10 py-3 md:py-4 rounded-full font-bold shadow-lg shadow-[#F05A00]/30 hover:bg-[#d94f00] hover:scale-105 transition-all text-base md:text-lg">
+            Get Started — Free <ArrowRight className="size-4 md:size-5" />
           </Link>
         </section>
       </div>

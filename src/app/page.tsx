@@ -2,12 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Search, Compass, BookOpen, Coffee, Heart, ArrowRight, CheckCircle2, PlayCircle, Star, Clock, ChefHat, Bookmark, Plus, TrendingUp, Users, ArrowUpRight } from "lucide-react";
+import { Search, Compass, BookOpen, Coffee, Heart, ArrowRight, CheckCircle2, PlayCircle, Star, Clock, ChefHat, Bookmark, Plus, TrendingUp, Users, ArrowUpRight, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 
 export default function ShoofEatsLanding() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [trendingRecipes, setTrendingRecipes] = useState<any[]>([]);
   const [chefOfWeek, setChefOfWeek] = useState<any>(null);
@@ -101,11 +102,11 @@ export default function ShoofEatsLanding() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'py-4 bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm' : 'py-6 bg-transparent'}`}
+        className={`fixed w-full z-50 transition-all duration-500 ${isScrolled || isMobileMenuOpen ? 'py-4 bg-white/90 backdrop-blur-xl border-b border-white/20 shadow-sm' : 'py-6 bg-transparent'}`}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <a href="#" className={`${syneFont} text-2xl font-bold tracking-tight text-[#F05A00]`}>
+            <a href="#" className={`${syneFont} text-2xl font-bold tracking-tight text-[#F05A00] relative z-50`}>
               ShoofEats.
             </a>
             <div className="hidden md:flex items-center gap-8 text-sm font-semibold text-[#2A120A]">
@@ -131,45 +132,79 @@ export default function ShoofEatsLanding() {
               </>
             )}
           </div>
+          
+          {/* Mobile Menu Toggle */}
+          <button 
+            className="md:hidden relative z-50 p-2 text-[#2A120A]"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
+          </button>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="md:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-xl px-6 py-8 flex flex-col gap-6"
+          >
+            {['Explore', 'Categories', 'Recipes', 'Drinks'].map((item) => (
+              <a key={item} href="#" className="text-xl font-bold text-[#2A120A]">{item}</a>
+            ))}
+            <div className="h-px bg-gray-100 my-2" />
+            {user ? (
+              <Link href="/dashboard" className="bg-[#F05A00] text-white text-center py-4 rounded-2xl font-bold shadow-lg">
+                Go to Dashboard
+              </Link>
+            ) : (
+              <div className="flex flex-col gap-4">
+                <Link href="/login" className="text-center font-bold text-[#2A120A] py-3">Log In</Link>
+                <Link href="/register" className="bg-[#2A120A] text-white text-center py-4 rounded-2xl font-bold shadow-lg">
+                  Get Started
+                </Link>
+              </div>
+            )}
+          </motion.div>
+        )}
       </motion.nav>
 
       {/* 2. Hero Section */}
-      <section className="relative pt-32 pb-24 overflow-hidden bg-[#F8F4EC]">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+      <section className="relative pt-32 md:pt-40 pb-16 md:pb-24 overflow-hidden bg-[#F8F4EC]">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
           {/* Left Text */}
           <motion.div
             variants={staggerContainer}
             initial="hidden"
             animate="visible"
-            className="relative z-10"
+            className="relative z-10 text-center lg:text-left"
           >
-            <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FFD9B8]/50 text-[#F05A00] text-xs font-bold tracking-wider mb-8 border border-[#FFD9B8]">
+            <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FFD9B8]/50 text-[#F05A00] text-xs font-bold tracking-wider mb-6 md:mb-8 border border-[#FFD9B8]">
               <Star className="size-3 fill-[#F05A00]" />
               Your Personal Cookbook
             </motion.div>
 
-            <motion.h1 variants={fadeIn} className={`${syneFont} text-[4.5rem] md:text-[5.5rem] lg:text-[6rem] font-black leading-[0.9] tracking-[-0.04em] mb-8 text-[#2A120A]`}>
+            <motion.h1 variants={fadeIn} className={`${syneFont} text-5xl md:text-[5.5rem] lg:text-[6rem] font-black leading-[1.1] md:leading-[0.9] tracking-[-0.04em] mb-6 md:mb-8 text-[#2A120A]`}>
               Discover<br />
               Delicious Recipes<br />
               <span className="text-[#F05A00]">For Every Mood</span>
             </motion.h1>
 
-            <motion.p variants={fadeIn} className="text-lg text-[#5D4037] mb-10 max-w-lg leading-relaxed font-medium">
+            <motion.p variants={fadeIn} className="text-base md:text-lg text-[#5D4037] mb-8 md:mb-10 max-w-lg mx-auto lg:mx-0 leading-relaxed font-medium">
               Find, save, and cook amazing food and drink recipes in one place. Explore a world of flavors tailored just for you.
             </motion.p>
 
             {/* Smart AI Search Bar */}
-            <motion.div variants={fadeIn} className="relative max-w-xl mb-6 group">
+            <motion.div variants={fadeIn} className="relative max-w-xl mx-auto lg:mx-0 mb-6 group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
               <input
                 suppressHydrationWarning
                 type="text"
-                className="block w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-white bg-white/50 backdrop-blur-sm text-[#2A120A] placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-[#FFD9B8]/50 focus:border-[#F05A00] focus:bg-white transition-all shadow-sm"
-                placeholder="Search recipes, drinks, or ingredients..."
+                className="block w-full pl-12 pr-14 py-4 rounded-2xl border-2 border-white bg-white/50 backdrop-blur-sm text-[#2A120A] placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-[#FFD9B8]/50 focus:border-[#F05A00] focus:bg-white transition-all shadow-sm text-sm md:text-base"
+                placeholder="Search recipes, drinks..."
               />
               <div className="absolute inset-y-0 right-2 flex items-center">
                 <button suppressHydrationWarning className="bg-[#F05A00] p-2.5 rounded-xl text-white hover:bg-[#d94f00] transition-colors">
@@ -178,7 +213,7 @@ export default function ShoofEatsLanding() {
               </div>
             </motion.div>
 
-            <motion.div variants={fadeIn} className="flex gap-2 flex-wrap">
+            <motion.div variants={fadeIn} className="flex gap-2 flex-wrap justify-center lg:justify-start">
               {['egg', 'coffee', 'healthy', 'quick meal'].map(chip => (
                 <button key={chip} suppressHydrationWarning className="px-3 py-1.5 rounded-lg bg-white/60 border border-white text-xs font-semibold text-[#5D4037] hover:bg-white hover:text-[#F05A00] transition-colors shadow-sm">
                   {chip}
@@ -192,9 +227,9 @@ export default function ShoofEatsLanding() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-            className="relative h-[600px] flex items-center justify-center lg:justify-end"
+            className="relative h-[400px] md:h-[600px] flex items-center justify-center lg:justify-end mt-10 lg:mt-0"
           >
-            <div className="relative w-full max-w-[500px] aspect-[4/5]">
+            <div className="relative w-full max-w-[320px] md:max-w-[500px] aspect-[4/5]">
               {/* Main Hero Image */}
               <div className="absolute right-0 top-0 w-[85%] h-[90%] rounded-[2.5rem] overflow-hidden drop-shadow-[0_40px_80px_rgba(0,0,0,0.15)] border-[8px] border-white z-20 bg-gray-200">
                 <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80" alt="Main dish" className="w-full h-full object-cover" />
@@ -252,12 +287,12 @@ export default function ShoofEatsLanding() {
           <p className="text-gray-400 text-lg">Top picks hand-curated by our culinary experts.</p>
         </div>
 
-        <div className="flex gap-6 overflow-x-auto px-6 pb-12 max-w-[1400px] mx-auto scrollbar-hide snap-x">
+        <div className="flex gap-4 md:gap-6 overflow-x-auto px-6 pb-12 max-w-[1400px] mx-auto scrollbar-hide snap-x -mx-6 md:mx-auto">
           {trendingRecipes.map((recipe, index) => (
             <motion.div
               key={recipe.id}
               whileHover={{ scale: 1.02 }}
-              className="min-w-[80vw] md:min-w-[600px] lg:min-w-[700px] h-[500px] rounded-[2.5rem] relative overflow-hidden group cursor-pointer snap-center shadow-2xl flex-shrink-0"
+              className="w-[85vw] md:w-auto md:min-w-[600px] lg:min-w-[700px] h-[400px] md:h-[500px] rounded-[2rem] md:rounded-[2.5rem] relative overflow-hidden group cursor-pointer snap-center shadow-xl md:shadow-2xl flex-shrink-0"
             >
               <img src={recipe.img || "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1200&q=80"} alt={recipe.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#110704] via-[#110704]/40 to-transparent"></div>
@@ -303,7 +338,7 @@ export default function ShoofEatsLanding() {
             <p className="text-[#5D4037] text-lg max-w-2xl mx-auto">Everything you need to master your kitchen, designed with simplicity and elegance in mind.</p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-6 auto-rows-[250px]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 auto-rows-auto md:auto-rows-[250px]">
 
             {/* Bento 1: Big Card */}
             <motion.div
@@ -311,7 +346,7 @@ export default function ShoofEatsLanding() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               whileHover={{ translateY: -5 }}
-              className="md:col-span-2 bg-white rounded-[2rem] p-10 flex flex-col justify-between shadow-sm border border-gray-100 relative overflow-hidden group"
+              className="md:col-span-2 bg-white rounded-[2rem] p-8 md:p-10 flex flex-col justify-between shadow-sm border border-gray-100 relative overflow-hidden group min-h-[250px]"
             >
               <div className="relative z-10 w-2/3">
                 <div className="w-12 h-12 bg-[#FFD9B8] rounded-xl flex items-center justify-center mb-6">
@@ -388,18 +423,18 @@ export default function ShoofEatsLanding() {
           but keeping the transition clean */}
 
       {/* 7. Featured Creator */}
-      <section className="py-24 bg-[#F8F4EC]">
+      <section className="py-16 md:py-24 bg-[#F8F4EC]">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className={`${syneFont} text-4xl font-bold text-[#2A120A] mb-12`}>Chef of the Week</h2>
+          <h2 className={`${syneFont} text-3xl md:text-4xl font-bold text-[#2A120A] mb-8 md:mb-12`}>Chef of the Week</h2>
 
           {chefOfWeek && (
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="max-w-2xl mx-auto bg-white rounded-[3rem] p-8 md:p-12 shadow-xl flex flex-col md:flex-row items-center gap-8 text-left relative overflow-hidden"
+              className="max-w-2xl mx-auto bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 shadow-xl flex flex-col md:flex-row items-center gap-6 md:gap-8 text-center md:text-left relative overflow-hidden"
             >
-              <img src={chefOfWeek.avatar_url || "https://api.dicebear.com/7.x/notionists/svg?seed=fallback"} alt="Chef" className="w-40 h-40 rounded-full object-cover shadow-lg border-4 border-white" />
-              <div>
-                <h3 className={`${syneFont} text-3xl font-bold text-[#2A120A] mb-2`}>
+              <img src={chefOfWeek.avatar_url || "https://api.dicebear.com/7.x/notionists/svg?seed=fallback"} alt="Chef" className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover shadow-lg border-4 border-white mx-auto md:mx-0" />
+              <div className="w-full">
+                <h3 className={`${syneFont} text-2xl md:text-3xl font-bold text-[#2A120A] mb-2`}>
                   {chefOfWeek.full_name || chefOfWeek.username || "Anonymous Chef"}
                 </h3>
                 <p className="text-[#F05A00] font-bold text-sm mb-4">
@@ -458,8 +493,8 @@ export default function ShoofEatsLanding() {
       </section>
 
       {/* 9. Footer */}
-      <footer className="bg-white py-20 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12">
+      <footer className="bg-white py-12 md:py-20 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-12">
           <div className="md:col-span-1">
             <a href="#" className={`${syneFont} text-3xl font-bold tracking-tight text-[#F05A00] block mb-6`}>
               ShoofEats.
