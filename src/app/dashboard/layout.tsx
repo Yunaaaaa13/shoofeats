@@ -13,7 +13,8 @@ import {
   Settings, 
   LogOut, 
   Menu,
-  X
+  X,
+  Users
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
@@ -23,6 +24,7 @@ const sidebarLinks = [
   { name: "My Recipes", href: "/dashboard/recipes", icon: BookOpen },
   { name: "Add Recipe", href: "/dashboard/recipes/new", icon: PlusSquare },
   { name: "Favorites", href: "/dashboard/favorites", icon: Heart },
+  { name: "Community", href: "/dashboard/community", icon: Users },
   { name: "Profile", href: "/dashboard/profile", icon: User },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];

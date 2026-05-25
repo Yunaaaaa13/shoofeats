@@ -3,10 +3,41 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Edit2, MapPin, Link as LinkIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 const syneFont = "font-[family-name:var(--font-syne)]";
 
 export default function ProfilePage() {
+  const [profile, setProfile] = useState<any>(null);
+  const [stats, setStats] = useState({ recipes: 0, followers: 0, following: 0 });
+  const [isLoading, setIsLoading] = useState(true);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+      setProfile(prof);
+
+      // Fetch stats
+      const { count: recipeCount } = await supabase.from('recipes').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id);
+      const { count: followersCount } = await supabase.from('follows').select('*', { count: 'exact', head: true }).eq('following_id', session.user.id);
+      const { count: followingCount } = await supabase.from('follows').select('*', { count: 'exact', head: true }).eq('follower_id', session.user.id);
+
+      setStats({
+        recipes: recipeCount || 0,
+        followers: followersCount || 0,
+        following: followingCount || 0
+      });
+      setIsLoading(false);
+    };
+    fetchProfile();
+  }, []);
+
+  if (isLoading) return <div className="p-10 text-center text-gray-500 font-bold">Loading profile...</div>;
   return (
     <div className="max-w-3xl mx-auto space-y-8 pb-12">
       
@@ -19,12 +50,14 @@ export default function ProfilePage() {
           </button>
         </div>
         
-        <div className="absolute -bottom-16 left-12 flex items-end gap-6">
-          <div className="relative group">
-            <div className="w-32 h-32 rounded-full border-4 border-[#FDFBF7] overflow-hidden shadow-xl bg-white">
-              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80" alt="Luthfi Rafif" className="w-full h-full object-cover" />
-            </div>
-            <button className="absolute bottom-0 right-0 bg-[#F05A00] text-white p-2.5 rounded-full shadow-lg hover:scale-110 transition-transform border-2 border-white">
+        <div className="absolute -bottom-16 left-8 flex items-end gap-6">
+          <div className="relative">
+            <img 
+              src={profile?.avatar_url || "https://api.dicebear.com/7.x/notionists/svg?seed=fallback"} 
+              alt="Profile Avatar" 
+              className="w-32 h-32 rounded-full border-4 border-[#FDFBF7] object-cover shadow-lg bg-white"
+            />
+            <button className="absolute bottom-0 right-0 bg-[#F05A00] text-white p-2.5 rounded-full shadow-lg border-2 border-[#FDFBF7] hover:bg-[#d94f00] transition-colors">
               <Edit2 className="size-4" />
             </button>
           </div>
@@ -35,10 +68,10 @@ export default function ProfilePage() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="px-4 lg:px-12">
         <div className="flex justify-between items-start mb-6">
           <div>
-            <h2 className={`${syneFont} text-4xl font-bold text-[#2A120A] mb-1`}>Luthfi Rafif</h2>
-            <p className="text-[#F05A00] font-bold text-lg mb-4">Recipe Creator</p>
+            <h2 className={`${syneFont} text-4xl font-bold text-[#2A120A] mb-1`}>{profile?.full_name || 'Anonymous Chef'}</h2>
+            <p className="text-[#F05A00] font-bold text-lg mb-4">@{profile?.username || 'user'}</p>
             <p className="text-gray-600 max-w-lg mb-6 leading-relaxed">
-              Passionate home cook exploring the world one recipe at a time. I love creating simple, healthy, and delicious meals for busy people.
+              {profile?.bio || "Passionate home cook exploring the world one recipe at a time. I love creating simple, healthy, and delicious meals for busy people."}
             </p>
             <div className="flex gap-4 text-sm font-medium text-gray-500 mb-8">
               <span className="flex items-center gap-1.5"><MapPin className="size-4 text-gray-400" /> Jakarta, ID</span>
@@ -52,18 +85,18 @@ export default function ProfilePage() {
         </div>
 
         {/* Stats */}
-        <div className="flex gap-8 border-y border-gray-200 py-6 mb-8">
+        <div className="flex items-center gap-8 border-t border-gray-100 pt-8 mb-8">
           <div>
-            <p className={`${syneFont} text-3xl font-bold text-[#2A120A]`}>12</p>
+            <p className={`${syneFont} text-3xl font-black text-[#2A120A]`}>{stats.recipes}</p>
             <p className="text-gray-500 font-medium">Recipes</p>
           </div>
           <div>
-            <p className={`${syneFont} text-3xl font-bold text-[#2A120A]`}>89</p>
-            <p className="text-gray-500 font-medium">Saves</p>
+            <p className={`${syneFont} text-3xl font-black text-[#2A120A]`}>{stats.followers}</p>
+            <p className="text-gray-500 font-medium">Followers</p>
           </div>
           <div>
-            <p className={`${syneFont} text-3xl font-bold text-[#2A120A]`}>420</p>
-            <p className="text-gray-500 font-medium">Visits</p>
+            <p className={`${syneFont} text-3xl font-black text-[#2A120A]`}>{stats.following}</p>
+            <p className="text-gray-500 font-medium">Following</p>
           </div>
         </div>
         

@@ -9,6 +9,7 @@ import { createClient } from "@/utils/supabase/client";
 export default function ShoofEatsLanding() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [trendingRecipes, setTrendingRecipes] = useState<any[]>([]);
   const supabase = createClient();
 
   useEffect(() => {
@@ -17,11 +18,24 @@ export default function ShoofEatsLanding() {
     };
     window.addEventListener("scroll", handleScroll);
 
-    const checkUser = async () => {
+    const fetchData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user || null);
+
+      // Fetch trending recipes
+      const { data: recipes } = await supabase
+        .from('recipes')
+        .select(`
+          *,
+          profiles:user_id ( full_name, username, avatar_url )
+        `)
+        .eq('status', 'Published')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (recipes) setTrendingRecipes(recipes);
     };
-    checkUser();
+    fetchData();
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -263,33 +277,39 @@ export default function ShoofEatsLanding() {
         </div>
 
         <div className="flex gap-6 overflow-x-auto px-6 pb-12 max-w-[1400px] mx-auto scrollbar-hide snap-x">
+          {trendingRecipes.map((recipe, index) => (
+            <motion.div
+              key={recipe.id}
+              whileHover={{ scale: 1.02 }}
+              className="min-w-[80vw] md:min-w-[600px] lg:min-w-[700px] h-[500px] rounded-[2.5rem] relative overflow-hidden group cursor-pointer snap-center shadow-2xl flex-shrink-0"
+            >
+              <img src={recipe.img || "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1200&q=80"} alt={recipe.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#110704] via-[#110704]/40 to-transparent"></div>
 
-          {/* Big Featured Card */}
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            className="min-w-[80vw] md:min-w-[600px] lg:min-w-[700px] h-[500px] rounded-[2.5rem] relative overflow-hidden group cursor-pointer snap-center shadow-2xl flex-shrink-0"
-          >
-            <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1200&q=80" alt="Matcha Latte" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#110704] via-[#110704]/40 to-transparent"></div>
+              <div className="absolute bottom-0 left-0 p-10 w-full">
+                <div className="flex items-center gap-4 mb-4">
+                  <span className="bg-[#F05A00] px-3 py-1 rounded-full text-xs font-bold text-white uppercase tracking-wider">{recipe.category || "Featured"}</span>
+                  <div className="flex items-center gap-2">
+                    <img src={recipe.profiles?.avatar_url || "https://api.dicebear.com/7.x/notionists/svg?seed=fallback"} className="w-6 h-6 rounded-full border border-white" />
+                    <span className="text-white/80 text-sm font-semibold">{recipe.profiles?.full_name || recipe.profiles?.username || "Anonymous"}</span>
+                  </div>
+                </div>
+                <h3 className={`${syneFont} text-5xl font-bold text-white mb-4`}>{recipe.title}</h3>
+                <p className="text-gray-300 max-w-md text-lg mb-8 line-clamp-2">{recipe.description || "A delicious creation by our community."}</p>
 
-            <div className="absolute bottom-0 left-0 p-10 w-full">
-              <div className="flex items-center gap-4 mb-4">
-                <span className="bg-[#F05A00] px-3 py-1 rounded-full text-xs font-bold text-white uppercase tracking-wider">Featured</span>
-                <span className="text-white/80 text-sm font-semibold flex items-center gap-1"><Star className="size-4 text-yellow-400 fill-yellow-400" /> 4.9</span>
+                <div className="flex gap-4 opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                  <button className="bg-white text-[#2A120A] px-8 py-3 rounded-full font-bold hover:bg-[#F05A00] hover:text-white transition-colors flex items-center gap-2">
+                    <PlayCircle className="size-5" /> View Recipe
+                  </button>
+                </div>
               </div>
-              <h3 className={`${syneFont} text-5xl font-bold text-white mb-4`}>Iced Matcha Latte</h3>
-              <p className="text-gray-300 max-w-md text-lg mb-8 line-clamp-2">Experience the perfect balance of premium ceremonial grade matcha and creamy oat milk.</p>
-
-              <div className="flex gap-4 opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                <button className="bg-white text-[#2A120A] px-8 py-3 rounded-full font-bold hover:bg-[#F05A00] hover:text-white transition-colors flex items-center gap-2">
-                  <PlayCircle className="size-5" /> View Recipe
-                </button>
-                <button className="bg-white/10 backdrop-blur border border-white/20 text-white p-3 rounded-full hover:bg-white hover:text-[#2A120A] transition-colors">
-                  <Heart className="size-5" />
-                </button>
-              </div>
+            </motion.div>
+          ))}
+          {trendingRecipes.length === 0 && (
+            <div className="w-full text-center py-20 text-gray-500 font-bold">
+              No public recipes yet. Be the first to publish one!
             </div>
-          </motion.div>
+          )}
 
           {/* Smaller Cards */}
           {[

@@ -9,32 +9,54 @@ import {
   Eye, 
   ArrowRight,
   MoreVertical,
-  CheckCircle2
+  CheckCircle2,
+  Loader2
 } from "lucide-react";
 import Link from "next/link";
+import { createClient } from "@/utils/supabase/client";
+import { useEffect, useState } from "react";
 
 const syneFont = "font-[family-name:var(--font-syne)]";
 
 export default function DashboardOverview() {
-  const stats = [
-    { label: "Recipes Created", value: "12", icon: BookOpen, color: "text-blue-600", bg: "bg-blue-50" },
-    { label: "Saved Recipes", value: "24", icon: Heart, color: "text-red-500", bg: "bg-red-50" },
-    { label: "Most Cooked", value: "Coffee", icon: TrendingUp, color: "text-green-600", bg: "bg-green-50" },
-    { label: "Total Views", value: "1,204", icon: Eye, color: "text-purple-600", bg: "bg-purple-50" },
-  ];
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [recipeCount, setRecipeCount] = useState(0);
+  const [recentRecipes, setRecentRecipes] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const supabase = createClient();
 
-  const recentRecipes = [
-    { title: "Chicken Katsu", time: "2 days ago", img: "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=300&q=80" },
-    { title: "Matcha Latte", time: "4 days ago", img: "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=300&q=80" },
-    { title: "Avocado Toast", time: "1 week ago", img: "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?auto=format&fit=crop&w=300&q=80" },
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      // Fetch profile
+      const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+      setUserProfile(profile);
+
+      // Fetch recipe stats
+      const { count } = await supabase.from('recipes').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id);
+      setRecipeCount(count || 0);
+
+      // Fetch recent recipes
+      const { data: recipes } = await supabase.from('recipes').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false }).limit(3);
+      setRecentRecipes(recipes || []);
+
+      setIsLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  const stats = [
+    { label: "Recipes Created", value: recipeCount.toString(), icon: BookOpen, color: "text-blue-600", bg: "bg-blue-50" },
+    { label: "Saved Recipes", value: "0", icon: Heart, color: "text-red-500", bg: "bg-red-50" }, // Mocked until favorites table
+    { label: "Most Cooked", value: "-", icon: TrendingUp, color: "text-green-600", bg: "bg-green-50" },
+    { label: "Total Views", value: "0", icon: Eye, color: "text-purple-600", bg: "bg-purple-50" },
   ];
 
   const activities = [
-    { day: "Today", events: [{ text: "Added Matcha Latte recipe", time: "10:24 AM" }] },
-    { day: "Yesterday", events: [
-      { text: "Saved Chicken Katsu", time: "06:12 PM" },
-      { text: "Updated Profile Avatar", time: "05:00 PM" }
-    ] },
+    { day: "Today", events: [{ text: "Logged in", time: new Date().toLocaleTimeString() }] },
   ];
 
   return (
@@ -50,18 +72,18 @@ export default function DashboardOverview() {
         
         <div className="relative z-10 max-w-2xl">
           <h2 className={`${syneFont} text-4xl lg:text-5xl font-bold mb-4`}>
-            Good Evening, Luthfi 👋
+            Good Evening, {userProfile?.full_name || userProfile?.username || 'Chef'} 👋
           </h2>
           <p className="text-xl text-gray-300 mb-10 leading-relaxed font-medium">
-            You've created <span className="text-white font-bold">12 recipes</span> this month.<br/>
+            You've created <span className="text-white font-bold">{recipeCount} recipes</span>.<br/>
             Keep building your personal cookbook.
           </p>
           <div className="flex flex-wrap gap-4">
             <Link href="/dashboard/recipes/new" className="bg-[#F05A00] text-white px-8 py-3.5 rounded-full font-bold shadow-lg shadow-[#F05A00]/30 hover:bg-[#d94f00] transition-colors">
               Add Recipe
             </Link>
-            <Link href="/" className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-3.5 rounded-full font-bold hover:bg-white/20 transition-colors">
-              Explore Recipes
+            <Link href="/dashboard/community" className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-3.5 rounded-full font-bold hover:bg-white/20 transition-colors">
+              Explore Community
             </Link>
           </div>
         </div>
@@ -104,7 +126,7 @@ export default function DashboardOverview() {
             <div className="space-y-4">
               {recentRecipes.map((recipe, i) => (
                 <motion.div 
-                  key={recipe.title}
+                  key={recipe.id}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 + (i * 0.1) }}
@@ -114,18 +136,22 @@ export default function DashboardOverview() {
                     <img src={recipe.img} alt={recipe.title} className="w-16 h-16 rounded-2xl object-cover" />
                     <div>
                       <h4 className={`${syneFont} font-bold text-[#2A120A] text-lg`}>{recipe.title}</h4>
-                      <p className="text-sm text-gray-500 font-medium">{recipe.time}</p>
+                      <p className="text-sm text-gray-500 font-medium">
+                        {new Date(recipe.created_at).toLocaleDateString()}
+                      </p>
                     </div>
                   </div>
                   <div className="hidden sm:flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-[#2A120A] bg-gray-50 rounded-lg">Edit</button>
-                    <button className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-[#2A120A] bg-gray-50 rounded-lg">View</button>
+                    <Link href={`/dashboard/recipes/${recipe.id}`} className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-[#2A120A] bg-gray-50 rounded-lg">View</Link>
                   </div>
                   <button className="sm:hidden text-gray-400">
                     <MoreVertical className="size-5" />
                   </button>
                 </motion.div>
               ))}
+              {recentRecipes.length === 0 && (
+                <p className="text-gray-500 py-4 font-medium">No recipes created yet.</p>
+              )}
             </div>
           </section>
 

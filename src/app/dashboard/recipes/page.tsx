@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Search, 
@@ -11,23 +11,53 @@ import {
   Trash2,
   Eye,
   Clock,
-  ChefHat
+  ChefHat,
+  BookOpen,
+  Loader2
 } from "lucide-react";
 import Link from "next/link";
+import { createClient } from "@/utils/supabase/client";
 
 const syneFont = "font-[family-name:var(--font-syne)]";
 
 export default function MyRecipesPage() {
   const [activeFilter, setActiveFilter] = useState("All");
+  const [recipes, setRecipes] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const supabase = createClient();
 
   const filters = ["All", "Food", "Drink", "Healthy", "Dessert", "Published", "Draft"];
 
-  const recipes = [
-    { id: 1, title: "Chicken Katsu", category: "Food", time: "20 min", status: "Published", img: "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=600&q=80" },
-    { id: 2, title: "Matcha Latte", category: "Drink", time: "5 min", status: "Published", img: "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=600&q=80" },
-    { id: 3, title: "Avocado Toast", category: "Healthy", time: "10 min", status: "Published", img: "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?auto=format&fit=crop&w=600&q=80" },
-    { id: 4, title: "Strawberry Shortcake", category: "Dessert", time: "45 min", status: "Draft", img: "https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=600&q=80" },
-  ];
+  const fetchRecipes = async () => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from("recipes")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching recipes:", error);
+    } else {
+      setRecipes(data || []);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
+
+  const deleteRecipe = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this recipe?")) return;
+    
+    const { error } = await supabase.from("recipes").delete().eq("id", id);
+    if (error) {
+      alert("Failed to delete: " + error.message);
+    } else {
+      // Optimistic update
+      setRecipes(recipes.filter(r => r.id !== id));
+    }
+  };
 
   const filteredRecipes = recipes.filter(r => {
     if (activeFilter === "All") return true;
@@ -89,7 +119,12 @@ export default function MyRecipesPage() {
       </div>
 
       {/* Recipe Grid */}
-      {filteredRecipes.length > 0 ? (
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+          <Loader2 className="size-10 animate-spin mb-4" />
+          <p className="font-medium">Loading your recipes...</p>
+        </div>
+      ) : filteredRecipes.length > 0 ? (
         <motion.div layout className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
           <AnimatePresence>
             {filteredRecipes.map((recipe) => (
@@ -124,7 +159,7 @@ export default function MyRecipesPage() {
                     <button className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#2A120A] hover:bg-blue-600 hover:text-white transition-colors transform translate-y-8 group-hover:translate-y-0 duration-500 shadow-xl">
                       <Edit3 className="size-5" />
                     </button>
-                    <button className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#2A120A] hover:bg-red-600 hover:text-white transition-colors transform translate-y-12 group-hover:translate-y-0 duration-700 shadow-xl">
+                    <button onClick={() => deleteRecipe(recipe.id)} className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#2A120A] hover:bg-red-600 hover:text-white transition-colors transform translate-y-12 group-hover:translate-y-0 duration-700 shadow-xl">
                       <Trash2 className="size-5" />
                     </button>
                   </div>

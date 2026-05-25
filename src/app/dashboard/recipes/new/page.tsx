@@ -10,17 +10,21 @@ import {
   Trash2, 
   GripVertical, 
   CheckCircle2,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Loader2
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
 const syneFont = "font-[family-name:var(--font-syne)]";
 
 export default function AddRecipePage() {
   const router = useRouter();
+  const supabase = createClient();
   const [step, setStep] = useState(1);
   const totalSteps = 5;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form State
   const [basicInfo, setBasicInfo] = useState({ title: "", description: "" });
@@ -66,9 +70,47 @@ export default function AddRecipePage() {
     }));
   };
 
-  const submitRecipe = (status: "Draft" | "Published") => {
-    alert(`Recipe saved as ${status}!`);
+  const submitRecipe = async (status: "Draft" | "Published") => {
+    setIsSubmitting(true);
+    
+    // Get current user
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session?.user) {
+      alert("You must be logged in to create a recipe.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Default image if none provided (for prototype)
+    const defaultImg = "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=800&q=80";
+
+    const newRecipe = {
+      user_id: session.user.id,
+      title: basicInfo.title || "Untitled Recipe",
+      description: basicInfo.description,
+      category: meta.category,
+      difficulty: meta.difficulty,
+      status: status,
+      time: "30 min", // You can add a time input field later
+      img: defaultImg,
+      ingredients: ingredients.filter(i => i.name.trim() !== ""),
+      instructions: instructions.filter(i => i.text.trim() !== ""),
+      tags: meta.tags,
+    };
+
+    const { error } = await supabase.from('recipes').insert([newRecipe]);
+
+    if (error) {
+      console.error("Error saving recipe:", error);
+      alert("Failed to save recipe: " + error.message);
+      setIsSubmitting(false);
+      return;
+    }
+
+    setIsSubmitting(false);
     router.push("/dashboard/recipes");
+    router.refresh();
   };
 
   return (
@@ -340,11 +382,19 @@ export default function AddRecipePage() {
               </div>
 
               <div className="mt-10 flex gap-4">
-                <button onClick={() => submitRecipe("Draft")} className="flex-1 bg-white border-2 border-gray-200 text-[#2A120A] py-4 rounded-xl font-bold text-lg hover:bg-gray-50 transition-colors">
-                  Save as Draft
+                <button 
+                  onClick={() => submitRecipe("Draft")} 
+                  disabled={isSubmitting}
+                  className="flex-1 bg-white border-2 border-gray-200 text-[#2A120A] py-4 rounded-xl font-bold text-lg hover:bg-gray-50 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isSubmitting && <Loader2 className="size-5 animate-spin" />} Save as Draft
                 </button>
-                <button onClick={() => submitRecipe("Published")} className="flex-1 bg-[#F05A00] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#d94f00] transition-colors shadow-xl shadow-[#F05A00]/30">
-                  Publish Recipe
+                <button 
+                  onClick={() => submitRecipe("Published")} 
+                  disabled={isSubmitting}
+                  className="flex-1 bg-[#F05A00] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#d94f00] transition-colors shadow-xl shadow-[#F05A00]/30 disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? <Loader2 className="size-5 animate-spin" /> : "Publish Recipe"}
                 </button>
               </div>
             </motion.div>
