@@ -22,6 +22,8 @@ export default function DashboardOverview() {
   const [userProfile, setUserProfile] = useState<any>(null);
   const [recipeCount, setRecipeCount] = useState(0);
   const [recentRecipes, setRecentRecipes] = useState<any[]>([]);
+  const [savedRecipes, setSavedRecipes] = useState<any[]>([]);
+  const [activities, setActivities] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const supabase = createClient();
 
@@ -43,6 +45,24 @@ export default function DashboardOverview() {
       const { data: recipes } = await supabase.from('recipes').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false }).limit(3);
       setRecentRecipes(recipes || []);
 
+      // Fetch saved recipes
+      const { data: saved } = await supabase
+        .from('saved_recipes')
+        .select(`*, recipe:recipe_id(*)`)
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false })
+        .limit(2);
+      setSavedRecipes(saved || []);
+
+      // Fetch recent activity
+      const { data: notifs } = await supabase
+        .from('notifications')
+        .select(`*, actor:actor_id ( full_name, username )`)
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false })
+        .limit(4);
+      setActivities(notifs || []);
+
       setIsLoading(false);
     };
     fetchData();
@@ -50,13 +70,9 @@ export default function DashboardOverview() {
 
   const stats = [
     { label: "Recipes Created", value: recipeCount.toString(), icon: BookOpen, color: "text-blue-600", bg: "bg-blue-50" },
-    { label: "Saved Recipes", value: "0", icon: Heart, color: "text-red-500", bg: "bg-red-50" }, // Mocked until favorites table
+    { label: "Saved Recipes", value: savedRecipes.length.toString(), icon: Heart, color: "text-red-500", bg: "bg-red-50" },
     { label: "Most Cooked", value: "-", icon: TrendingUp, color: "text-green-600", bg: "bg-green-50" },
     { label: "Total Views", value: "0", icon: Eye, color: "text-purple-600", bg: "bg-purple-50" },
-  ];
-
-  const activities = [
-    { day: "Today", events: [{ text: "Logged in", time: new Date().toLocaleTimeString() }] },
   ];
 
   return (
@@ -165,26 +181,35 @@ export default function DashboardOverview() {
             </div>
             
             <div className="grid grid-cols-2 gap-6">
-              {[
-                { title: "Healthy Salad", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=300&q=80" },
-                { title: "Espresso", img: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=300&q=80" }
-              ].map((recipe, i) => (
-                <motion.div 
-                  key={recipe.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 + (i * 0.1) }}
-                  className="group cursor-pointer"
-                >
-                  <div className="aspect-[4/3] rounded-3xl overflow-hidden relative mb-3 shadow-md">
-                    <img src={recipe.img} alt={recipe.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div className="absolute top-3 right-3 bg-white/90 p-2 rounded-full shadow-sm text-red-500">
-                      <Heart className="size-4 fill-red-500" />
-                    </div>
-                  </div>
-                  <h4 className="font-bold text-[#2A120A]">{recipe.title}</h4>
-                </motion.div>
-              ))}
+              {savedRecipes.length > 0 ? (
+                savedRecipes.map((saved, i) => {
+                  const recipe = saved.recipe;
+                  if (!recipe) return null;
+                  return (
+                    <Link href={`/dashboard/recipes/${recipe.id}`} key={recipe.id}>
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 + (i * 0.1) }}
+                        className="group cursor-pointer"
+                      >
+                        <div className="aspect-[4/3] rounded-3xl overflow-hidden relative mb-3 shadow-md">
+                          <img src={recipe.img || "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80"} alt={recipe.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <div className="absolute top-3 right-3 bg-white/90 p-2 rounded-full shadow-sm text-red-500">
+                            <Heart className="size-4 fill-red-500" />
+                          </div>
+                        </div>
+                        <h4 className="font-bold text-[#2A120A] truncate">{recipe.title}</h4>
+                      </motion.div>
+                    </Link>
+                  );
+                })
+              ) : (
+                <div className="col-span-2 py-8 text-center bg-gray-50 rounded-3xl border border-gray-100">
+                  <Heart className="size-8 mx-auto text-gray-300 mb-2" />
+                  <p className="text-gray-500 font-medium">No saved recipes yet.</p>
+                </div>
+              )}
             </div>
           </section>
 
@@ -197,30 +222,45 @@ export default function DashboardOverview() {
             <h3 className={`${syneFont} text-2xl font-bold text-[#2A120A] mb-8`}>Recent Activity</h3>
             
             <div className="space-y-8">
-              {activities.map((block, i) => (
-                <div key={block.day}>
-                  <p className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">{block.day}</p>
-                  <div className="space-y-6">
-                    {block.events.map((event, j) => (
-                      <div key={j} className="flex gap-4">
+              {activities.length > 0 ? (
+                <div className="space-y-6">
+                  {activities.map((event, j) => {
+                    const timeAgo = (dateStr: string) => {
+                      const diff = Math.floor((new Date().getTime() - new Date(dateStr).getTime()) / 1000);
+                      if (diff < 60) return "just now";
+                      if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+                      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+                      return `${Math.floor(diff / 86400)}d ago`;
+                    };
+                    const actor = event.actor?.full_name || event.actor?.username || "Someone";
+                    let text = "Interacted with you";
+                    if (event.type === 'like') text = `${actor} liked your recipe`;
+                    if (event.type === 'follow') text = `${actor} started following you`;
+                    if (event.type === 'save') text = `${actor} saved your recipe`;
+
+                    return (
+                      <div key={event.id} className="flex gap-4">
                         <div className="relative">
-                          <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center relative z-10 border-2 border-white">
-                            <CheckCircle2 className="size-4 text-green-500" />
+                          <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center relative z-10 border-2 border-white">
+                            <CheckCircle2 className="size-4 text-[#F05A00]" />
                           </div>
-                          {/* Line connector */}
-                          {j !== block.events.length - 1 && (
+                          {j !== activities.length - 1 && (
                             <div className="absolute top-8 left-1/2 -translate-x-1/2 w-0.5 h-6 bg-gray-100"></div>
                           )}
                         </div>
                         <div className="pt-1.5">
-                          <p className="font-semibold text-[#2A120A]">{event.text}</p>
-                          <p className="text-sm font-medium text-gray-400 mt-1">{event.time}</p>
+                          <p className="font-semibold text-[#2A120A] text-sm leading-tight">{text}</p>
+                          <p className="text-xs font-medium text-gray-400 mt-1">{timeAgo(event.created_at)}</p>
                         </div>
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
-              ))}
+              ) : (
+                <div className="text-center py-6 text-gray-400">
+                  <p className="font-medium text-sm">No recent activity.</p>
+                </div>
+              )}
             </div>
           </section>
         </div>

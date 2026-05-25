@@ -25,6 +25,11 @@ export default function AddRecipePage() {
   const [step, setStep] = useState(1);
   const totalSteps = 5;
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  // File State
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   // Form State
   const [basicInfo, setBasicInfo] = useState({ title: "", description: "" });
@@ -70,6 +75,14 @@ export default function AddRecipePage() {
     }));
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   const submitRecipe = async (status: "Draft" | "Published") => {
     setIsSubmitting(true);
     
@@ -82,8 +95,30 @@ export default function AddRecipePage() {
       return;
     }
 
-    // Default image if none provided (for prototype)
-    const defaultImg = "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=800&q=80";
+    // Default image if none provided
+    let imgUrl = "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=800&q=80";
+
+    if (imageFile) {
+      setUploadingImage(true);
+      const fileExt = imageFile.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${session.user.id}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('recipes')
+        .upload(filePath, imageFile);
+
+      setUploadingImage(false);
+
+      if (uploadError) {
+        alert("Error uploading image: " + uploadError.message + "\nMake sure you have created a public 'recipes' storage bucket.");
+        setIsSubmitting(false);
+        return;
+      }
+      
+      const { data: { publicUrl } } = supabase.storage.from('recipes').getPublicUrl(filePath);
+      imgUrl = publicUrl;
+    }
 
     const newRecipe = {
       user_id: session.user.id,
@@ -93,7 +128,7 @@ export default function AddRecipePage() {
       difficulty: meta.difficulty,
       status: status,
       time: "30 min", // You can add a time input field later
-      img: defaultImg,
+      img: imgUrl,
       ingredients: ingredients.filter(i => i.name.trim() !== ""),
       instructions: instructions.filter(i => i.text.trim() !== ""),
       tags: meta.tags,
@@ -181,13 +216,38 @@ export default function AddRecipePage() {
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-[#2A120A] mb-2">Cover Image</label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-2xl p-12 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 transition-colors group">
-                    <div className="w-16 h-16 bg-white rounded-full shadow-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <UploadCloud className="size-8 text-[#F05A00]" />
-                    </div>
-                    <p className="font-bold text-[#2A120A]">Click to upload or drag & drop</p>
-                    <p className="text-sm text-gray-500 mt-1">SVG, PNG, JPG or GIF (max. 5MB)</p>
-                  </div>
+                  <label className="border-2 border-dashed border-gray-300 rounded-2xl p-12 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 transition-colors group relative overflow-hidden h-64">
+                    <input 
+                      type="file" 
+                      accept="image/svg+xml, image/png, image/jpeg, image/gif" 
+                      onChange={handleImageChange} 
+                      className="hidden" 
+                    />
+                    {imagePreview ? (
+                      <>
+                        <img src={imagePreview} alt="Preview" className="absolute inset-0 w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <span className="text-white font-bold bg-black/50 px-4 py-2 rounded-full">Change Image</span>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-16 h-16 bg-white rounded-full shadow-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                          <UploadCloud className="size-8 text-[#F05A00]" />
+                        </div>
+                        <p className="font-bold text-[#2A120A]">Click to upload or drag & drop</p>
+                        <p className="text-sm text-gray-500 mt-1">SVG, PNG, JPG or GIF (max. 5MB)</p>
+                      </>
+                    )}
+                  </label>
+                  {imagePreview && (
+                    <button 
+                      onClick={() => { setImageFile(null); setImagePreview(null); }} 
+                      className="mt-3 text-sm font-bold text-red-500 hover:underline inline-block"
+                    >
+                      Remove Image
+                    </button>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -335,9 +395,15 @@ export default function AddRecipePage() {
               </div>
               
               <div className="bg-gray-50 rounded-3xl p-8 border border-gray-100">
-                <div className="aspect-video bg-gray-200 rounded-2xl mb-6 flex items-center justify-center text-gray-400">
-                  <ImageIcon className="size-12 opacity-50" />
-                </div>
+                {imagePreview ? (
+                  <div className="aspect-video rounded-2xl mb-6 overflow-hidden">
+                    <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div className="aspect-video bg-gray-200 rounded-2xl mb-6 flex items-center justify-center text-gray-400">
+                    <ImageIcon className="size-12 opacity-50" />
+                  </div>
+                )}
                 
                 <div className="flex gap-2 mb-4">
                   <span className="bg-[#FFD9B8] text-[#F05A00] px-3 py-1 rounded-full text-xs font-bold uppercase">{meta.category}</span>
@@ -391,10 +457,10 @@ export default function AddRecipePage() {
                 </button>
                 <button 
                   onClick={() => submitRecipe("Published")} 
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || uploadingImage}
                   className="flex-1 bg-[#F05A00] text-white py-4 rounded-xl font-bold text-lg hover:bg-[#d94f00] transition-colors shadow-xl shadow-[#F05A00]/30 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  {isSubmitting ? <Loader2 className="size-5 animate-spin" /> : "Publish Recipe"}
+                  {(isSubmitting || uploadingImage) ? <Loader2 className="size-5 animate-spin" /> : "Publish Recipe"}
                 </button>
               </div>
             </motion.div>
