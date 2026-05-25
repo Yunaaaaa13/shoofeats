@@ -13,7 +13,9 @@ import {
   Clock,
   ChefHat,
   BookOpen,
-  Loader2
+  Loader2,
+  Heart,
+  Bookmark
 } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
@@ -167,11 +169,17 @@ export default function MyRecipesPage() {
 
                 {/* Content */}
                 <div className="p-6">
-                  <h3 className={`${syneFont} text-xl font-bold text-[#2A120A] mb-4`}>{recipe.title}</h3>
-                  <div className="flex items-center gap-4 text-sm font-semibold text-gray-500">
-                    <span className="flex items-center gap-1.5"><ChefHat className="size-4 text-[#F05A00]" /> {recipe.category}</span>
-                    <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                    <span className="flex items-center gap-1.5"><Clock className="size-4 text-[#F05A00]" /> {recipe.time}</span>
+                  <h3 className={`${syneFont} text-xl font-bold text-[#2A120A] mb-3`}>{recipe.title}</h3>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4 text-sm font-semibold text-gray-500">
+                      <span className="flex items-center gap-1.5"><ChefHat className="size-4 text-[#F05A00]" /> {recipe.category}</span>
+                      <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                      <span className="flex items-center gap-1.5"><Clock className="size-4 text-[#F05A00]" /> {recipe.time}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs font-bold text-gray-400">
+                      <span className="flex items-center gap-1"><Heart className="size-3.5 text-red-400" /> {recipe.like_count || 0}</span>
+                      <span className="flex items-center gap-1"><Bookmark className="size-3.5 text-purple-400" /> {recipe.save_count || 0}</span>
+                    </div>
                   </div>
                 </div>
               </motion.div>
