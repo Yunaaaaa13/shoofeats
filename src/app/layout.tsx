@@ -26,8 +26,9 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${syne.variable} h-full antialiased scroll-smooth`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans bg-[#FDFBF7] text-[#3E2723]">{children}</body>
+      <body className="min-h-full flex flex-col font-sans bg-[#FDFBF7] text-[#3E2723]" suppressHydrationWarning>{children}</body>
     </html>
   );
 }

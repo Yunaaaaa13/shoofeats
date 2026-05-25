@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Search, Compass, BookOpen, Coffee, Heart, ArrowRight, CheckCircle2, PlayCircle, Star, Clock, ChefHat, Bookmark, Plus } from "lucide-react";
+import { motion } from "framer-motion";
+import { Search, Compass, BookOpen, Coffee, Heart, ArrowRight, CheckCircle2, PlayCircle, Star, Clock, ChefHat, Bookmark, Plus, TrendingUp, Users, ArrowUpRight } from "lucide-react";
 
-export default function ShoofyLanding() {
+export default function ShoofEatsLanding() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -15,348 +16,598 @@ export default function ShoofyLanding() {
   }, []);
 
   const syneFont = "font-[family-name:var(--font-syne)]";
-  const interFont = "font-[family-name:var(--font-inter)]";
+
+  // Motion variants
+  const fadeIn: any = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  };
+
+  const staggerContainer: any = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
 
   return (
-    <div className={`min-h-screen bg-[#FDFBF7] text-[#3E2723] ${interFont} selection:bg-orange-200`}>
-
-      {/* ─── 1. Navbar ─── */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-[#FDFBF7]/80 backdrop-blur-md shadow-sm py-4" : "bg-transparent py-6"}`}>
+    <main className="min-h-screen selection:bg-[#F05A00] selection:text-white" suppressHydrationWarning>
+      {/* 1. Navbar */}
+      <motion.nav
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'py-4 bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm' : 'py-6 bg-transparent'}`}
+      >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <a href="#" className={`${syneFont} text-2xl font-bold tracking-tight text-[#E65100]`}>
+            <a href="#" className={`${syneFont} text-2xl font-bold tracking-tight text-[#F05A00]`}>
               ShoofEats.
             </a>
-            <div className="hidden md:flex items-center gap-6 text-sm font-medium text-[#5D4037]">
-              <a href="#" className="hover:text-[#E65100] transition-colors">Explore</a>
-              <a href="#" className="hover:text-[#E65100] transition-colors">Categories</a>
-              <a href="#" className="hover:text-[#E65100] transition-colors">Recipes</a>
-              <a href="#" className="hover:text-[#E65100] transition-colors">Drinks</a>
+            <div className="hidden md:flex items-center gap-8 text-sm font-semibold text-[#2A120A]">
+              {['Explore', 'Categories', 'Recipes', 'Drinks'].map((item) => (
+                <a key={item} href="#" className="relative group overflow-hidden">
+                  <span className="group-hover:text-[#F05A00] transition-colors duration-300">{item}</span>
+                  <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[#F05A00] transform -translate-x-[101%] group-hover:translate-x-0 transition-transform duration-300 ease-out"></span>
+                </a>
+              ))}
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <button className="hidden md:block text-sm font-semibold text-[#5D4037] hover:text-[#E65100] transition-colors">
-              Login
-            </button>
-            <button className="bg-[#E65100] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-[0_4px_14px_0_rgba(230,81,0,0.3)] hover:shadow-[0_6px_20px_rgba(230,81,0,0.2)] hover:scale-105 transition-all">
-              Get Started
-            </button>
+          <div className="flex items-center gap-6">
+            <a href="#" className="text-sm font-semibold text-[#2A120A] hover:text-[#F05A00] transition-colors">Login</a>
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="bg-[#2A120A] text-white px-6 py-2.5 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl hover:bg-[#1a0a05] transition-all"
+            >
+              Start Cooking
+            </motion.button>
           </div>
         </div>
-      </nav>
+      </motion.nav>
 
-      {/* ─── 2. Hero Section ─── */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
+      {/* 2. Hero Section */}
+      <section className="relative pt-32 pb-24 overflow-hidden bg-[#F8F4EC]">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
 
           {/* Left Text */}
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FFE0B2]/50 text-[#E65100] text-xs font-bold tracking-wider mb-6 border border-[#FFE0B2]">
-              <Star className="size-3 fill-[#E65100]" />
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="relative z-10"
+          >
+            <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FFD9B8]/50 text-[#F05A00] text-xs font-bold tracking-wider mb-8 border border-[#FFD9B8]">
+              <Star className="size-3 fill-[#F05A00]" />
               Your Personal Cookbook
-            </div>
+            </motion.div>
 
-            <h1 className={`${syneFont} text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6 tracking-tight text-[#26150F]`}>
-              Discover Delicious Recipes <br />
-              <span className="text-[#E65100]">for Every Mood</span>
-            </h1>
+            <motion.h1 variants={fadeIn} className={`${syneFont} text-[4.5rem] md:text-[5.5rem] lg:text-[6rem] font-black leading-[0.9] tracking-[-0.04em] mb-8 text-[#2A120A]`}>
+              Discover<br />
+              Delicious Recipes<br />
+              <span className="text-[#F05A00]">For Every Mood</span>
+            </motion.h1>
 
-            <p className="text-lg text-[#5D4037] mb-10 max-w-lg leading-relaxed">
+            <motion.p variants={fadeIn} className="text-lg text-[#5D4037] mb-10 max-w-lg leading-relaxed font-medium">
               Find, save, and cook amazing food and drink recipes in one place. Explore a world of flavors tailored just for you.
-            </p>
+            </motion.p>
 
-            {/* Search Bar */}
-            <div className="relative max-w-md mb-8 group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-[#E65100] to-[#FFB300] rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-500"></div>
-              <div className="relative flex items-center bg-white p-2 rounded-2xl shadow-sm border border-[#EFEBE5]">
-                <Search className="size-5 text-gray-400 ml-3" />
-                <input
-                  type="text"
-                  placeholder="Search recipes, drinks, ingredients..."
-                  className="w-full bg-transparent px-4 py-2 text-sm focus:outline-none placeholder:text-gray-400 text-[#3E2723]"
-                />
-                <button className="bg-[#26150F] text-white p-2 rounded-xl hover:bg-[#E65100] transition-colors">
+            {/* Smart AI Search Bar */}
+            <motion.div variants={fadeIn} className="relative max-w-xl mb-6 group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                className="block w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-white bg-white/50 backdrop-blur-sm text-[#2A120A] placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-[#FFD9B8]/50 focus:border-[#F05A00] focus:bg-white transition-all shadow-sm"
+                placeholder="Search recipes, drinks, or ingredients..."
+              />
+              <div className="absolute inset-y-0 right-2 flex items-center">
+                <button className="bg-[#F05A00] p-2.5 rounded-xl text-white hover:bg-[#d94f00] transition-colors">
                   <ArrowRight className="size-5" />
                 </button>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="flex flex-wrap items-center gap-4">
-              <button className="bg-[#E65100] text-white px-8 py-3.5 rounded-full text-sm font-bold shadow-lg shadow-[#E65100]/20 hover:scale-105 transition-all">
-                Explore Recipes
-              </button>
-              <button className="bg-white text-[#3E2723] border border-[#D7CCC8] px-8 py-3.5 rounded-full text-sm font-bold hover:bg-[#F5F5F5] transition-all flex items-center gap-2">
-                <Plus className="size-4" />
-                Add Your Recipe
-              </button>
-            </div>
-          </div>
+            <motion.div variants={fadeIn} className="flex gap-2 flex-wrap">
+              {['egg', 'coffee', 'healthy', 'quick meal'].map(chip => (
+                <button key={chip} className="px-3 py-1.5 rounded-lg bg-white/60 border border-white text-xs font-semibold text-[#5D4037] hover:bg-white hover:text-[#F05A00] transition-colors shadow-sm">
+                  {chip}
+                </button>
+              ))}
+            </motion.div>
+          </motion.div>
 
-          {/* Right Collage */}
-          <div className="relative h-[600px] hidden lg:block">
-            {/* Decorative blob */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#FFE0B2]/40 rounded-full blur-3xl"></div>
-
-            {/* Grid Collage */}
-            <div className="absolute top-10 right-20 w-64 h-80 rounded-[2rem] overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500 z-20 border-4 border-white">
-              <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80" alt="Ramen" className="w-full h-full object-cover" />
-            </div>
-
-            <div className="absolute bottom-10 right-10 w-56 h-64 rounded-[2rem] overflow-hidden shadow-2xl -rotate-6 hover:rotate-0 transition-transform duration-500 z-30 border-4 border-white">
-              <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=500&q=80" alt="Coffee" className="w-full h-full object-cover" />
-            </div>
-
-            <div className="absolute top-32 right-80 w-48 h-56 rounded-[2rem] overflow-hidden shadow-xl -rotate-12 hover:rotate-0 transition-transform duration-500 z-10 border-4 border-white">
-              <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=500&q=80" alt="Dessert" className="w-full h-full object-cover" />
-            </div>
-
-            {/* Floating badge */}
-            <div className="absolute bottom-40 right-72 bg-white/90 backdrop-blur p-4 rounded-2xl shadow-xl z-40 flex items-center gap-3 border border-white">
-              <div className="bg-green-100 p-2 rounded-full text-green-600">
-                <Heart className="size-5 fill-green-600" />
+          {/* Right Image Composition */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+            className="relative h-[600px] flex items-center justify-center lg:justify-end"
+          >
+            <div className="relative w-full max-w-[500px] aspect-[4/5]">
+              {/* Main Hero Image */}
+              <div className="absolute right-0 top-0 w-[85%] h-[90%] rounded-[2.5rem] overflow-hidden drop-shadow-[0_40px_80px_rgba(0,0,0,0.15)] border-[8px] border-white z-20 bg-gray-200">
+                <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80" alt="Main dish" className="w-full h-full object-cover" />
               </div>
-              <div>
-                <p className="text-xs font-bold text-gray-500">Popular</p>
-                <p className="text-sm font-black text-[#26150F]">Matcha Latte</p>
+
+              {/* Overlap Image 2 */}
+              <div className="absolute left-0 bottom-10 w-[55%] h-[45%] rounded-[2rem] overflow-hidden drop-shadow-2xl border-[6px] border-white z-30 -rotate-6 hover:rotate-0 transition-transform duration-500 bg-gray-200">
+                <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=600&q=80" alt="Dessert" className="w-full h-full object-cover" />
               </div>
+
+              {/* Floating Stat Card */}
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-12 -left-8 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.1)] z-40 border border-white flex items-center gap-4"
+              >
+                <div className="bg-[#FFD9B8] p-3 rounded-full text-[#F05A00]">
+                  <Star className="size-5 fill-[#F05A00]" />
+                </div>
+                <div>
+                  <p className="text-sm font-black text-[#2A120A]">4.9 Rating</p>
+                  <p className="text-xs font-bold text-gray-500">10K+ Recipes Shared</p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute bottom-24 -right-6 bg-white/90 backdrop-blur-md px-5 py-3 rounded-2xl shadow-xl z-40 border border-white flex items-center gap-3"
+              >
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                </span>
+                <p className="text-xs font-bold text-[#2A120A]">2,340 people cooking</p>
+              </motion.div>
             </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 2.5 Trusted By / Social Proof */}
+      <section className="py-10 border-y border-gray-200 bg-white">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6 opacity-60 grayscale">
+          <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Featured in</p>
+          <div className="flex items-center gap-10 overflow-x-auto w-full md:w-auto font-black text-xl text-gray-400">
+            <span>TechCrunch</span>
+            <span>Forbes</span>
+            <span>TheNewYorkTimes</span>
+            <span>BonAppétit</span>
           </div>
         </div>
       </section>
 
-      {/* ─── 3. Categories ─── */}
-      <section className="py-20 bg-white">
+      {/* 3. Categories */}
+      <section className="py-24 bg-[#F8F4EC]">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-end justify-between mb-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex items-end justify-between mb-12"
+          >
             <div>
-              <h2 className={`${syneFont} text-3xl font-bold text-[#26150F] mb-2`}>Explore by Category</h2>
-              <p className="text-[#5D4037]">Find what you're craving right now.</p>
+              <h2 className={`${syneFont} text-4xl font-bold text-[#2A120A] mb-3`}>Explore by Category</h2>
+              <p className="text-[#5D4037] text-lg">Find what you're craving right now.</p>
             </div>
-            <a href="#" className="hidden sm:flex items-center gap-1 text-[#E65100] font-bold text-sm hover:underline">
+            <a href="#" className="hidden sm:flex items-center gap-2 text-[#F05A00] font-bold hover:underline">
               View All <ArrowRight className="size-4" />
             </a>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {[
-              { name: "Food", icon: "🍜", color: "bg-red-50" },
-              { name: "Drinks", icon: "☕", color: "bg-amber-50" },
-              { name: "Dessert", icon: "🍰", color: "bg-pink-50" },
-              { name: "Healthy", icon: "🥗", color: "bg-green-50" },
-              { name: "Quick Meals", icon: "⚡", color: "bg-blue-50" },
-              { name: "Trending", icon: "🔥", color: "bg-orange-50" },
-            ].map((cat) => (
-              <div key={cat.name} className={`${cat.color} rounded-3xl p-6 text-center cursor-pointer hover:scale-105 transition-transform duration-300 border border-transparent hover:border-black/5`}>
-                <div className="text-4xl mb-3">{cat.icon}</div>
-                <h3 className="font-bold text-[#3E2723]">{cat.name}</h3>
-              </div>
+              { name: "Pasta", count: "120+", img: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=300&q=80" },
+              { name: "Coffee", count: "85+", img: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=300&q=80" },
+              { name: "Dessert", count: "200+", img: "https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=300&q=80" },
+              { name: "Healthy", count: "150+", img: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=300&q=80" },
+              { name: "Meat", count: "90+", img: "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=300&q=80" },
+              { name: "Vegan", count: "110+", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=300&q=80" },
+            ].map((cat, i) => (
+              <motion.div
+                key={cat.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -8, scale: 1.03 }}
+                className="group cursor-pointer"
+              >
+                <div className="aspect-[4/5] rounded-3xl overflow-hidden relative mb-4 shadow-md group-hover:shadow-[0_20px_40px_rgba(240,90,0,0.15)] transition-all duration-300">
+                  <img src={cat.img} alt={cat.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300"></div>
+                </div>
+                <h3 className={`${syneFont} font-bold text-xl text-[#2A120A]`}>{cat.name}</h3>
+                <p className="text-sm font-medium text-gray-500">{cat.count} recipes</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── 4. Trending Recipes (Netflix Style) ─── */}
-      <section className="py-20 bg-[#26150F] overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 mb-10">
-          <h2 className={`${syneFont} text-3xl font-bold text-white mb-2`}>Trending Recipes</h2>
-          <p className="text-gray-400">What everyone is cooking this week.</p>
+      {/* 4. Trending Recipes */}
+      <section className="py-24 bg-[#110704] overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#F05A00]/5 blur-[150px] rounded-full pointer-events-none"></div>
+
+        <div className="max-w-[1400px] mx-auto px-6 mb-12">
+          <motion.h2
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className={`${syneFont} text-4xl font-bold text-white mb-3`}
+          >
+            Trending Today
+          </motion.h2>
+          <p className="text-gray-400 text-lg">Top picks hand-curated by our culinary experts.</p>
         </div>
 
-        {/* Horizontal Scroll Area */}
-        <div className="flex gap-6 overflow-x-auto px-6 pb-10 max-w-7xl mx-auto scrollbar-hide snap-x">
-          {[
-            { title: "Matcha Latte", time: "5 min", type: "Drink", img: "https://images.unsplash.com/photo-1515823662972-da6a2b4d3002?auto=format&fit=crop&w=600&q=80" },
-            { title: "Chicken Katsu", time: "20 min", type: "Food", img: "https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?auto=format&fit=crop&w=600&q=80" },
-            { title: "Avocado Toast", time: "10 min", type: "Healthy", img: "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?auto=format&fit=crop&w=600&q=80" },
-            { title: "Iced Caramel Macchiato", time: "5 min", type: "Drink", img: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80" },
-            { title: "Spicy Ramen", time: "15 min", type: "Food", img: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=600&q=80" },
-          ].map((recipe, i) => (
-            <div key={i} className="min-w-[280px] md:min-w-[320px] h-[400px] rounded-3xl relative overflow-hidden group cursor-pointer snap-center shadow-2xl flex-shrink-0">
-              <img src={recipe.img} alt={recipe.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+        <div className="flex gap-6 overflow-x-auto px-6 pb-12 max-w-[1400px] mx-auto scrollbar-hide snap-x">
 
-              <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white border border-white/20">
-                {recipe.type}
+          {/* Big Featured Card */}
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="min-w-[80vw] md:min-w-[600px] lg:min-w-[700px] h-[500px] rounded-[2.5rem] relative overflow-hidden group cursor-pointer snap-center shadow-2xl flex-shrink-0"
+          >
+            <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1200&q=80" alt="Matcha Latte" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#110704] via-[#110704]/40 to-transparent"></div>
+
+            <div className="absolute bottom-0 left-0 p-10 w-full">
+              <div className="flex items-center gap-4 mb-4">
+                <span className="bg-[#F05A00] px-3 py-1 rounded-full text-xs font-bold text-white uppercase tracking-wider">Featured</span>
+                <span className="text-white/80 text-sm font-semibold flex items-center gap-1"><Star className="size-4 text-yellow-400 fill-yellow-400" /> 4.9</span>
               </div>
+              <h3 className={`${syneFont} text-5xl font-bold text-white mb-4`}>Iced Matcha Latte</h3>
+              <p className="text-gray-300 max-w-md text-lg mb-8 line-clamp-2">Experience the perfect balance of premium ceremonial grade matcha and creamy oat milk.</p>
 
-              <div className="absolute bottom-0 left-0 p-6 w-full transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                <h3 className={`${syneFont} text-2xl font-bold text-white mb-2`}>{recipe.title}</h3>
-                <div className="flex items-center gap-3 text-sm text-gray-300 font-medium mb-4">
-                  <span className="flex items-center gap-1"><Clock className="size-4" /> {recipe.time}</span>
-                  <span className="w-1 h-1 rounded-full bg-gray-500"></span>
-                  <span>{recipe.type}</span>
-                </div>
-                <button className="bg-white text-black px-5 py-2.5 rounded-full text-sm font-bold w-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-[#E65100] hover:text-white flex items-center justify-center gap-2">
-                  <PlayCircle className="size-4" /> View Recipe
+              <div className="flex gap-4 opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                <button className="bg-white text-[#2A120A] px-8 py-3 rounded-full font-bold hover:bg-[#F05A00] hover:text-white transition-colors flex items-center gap-2">
+                  <PlayCircle className="size-5" /> View Recipe
+                </button>
+                <button className="bg-white/10 backdrop-blur border border-white/20 text-white p-3 rounded-full hover:bg-white hover:text-[#2A120A] transition-colors">
+                  <Heart className="size-5" />
                 </button>
               </div>
             </div>
+          </motion.div>
+
+          {/* Smaller Cards */}
+          {[
+            { title: "Chicken Katsu", time: "20 min", type: "Food", img: "https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?auto=format&fit=crop&w=600&q=80" },
+            { title: "Avocado Toast", time: "10 min", type: "Healthy", img: "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?auto=format&fit=crop&w=600&q=80" },
+            { title: "Caramel Macchiato", time: "5 min", type: "Drink", img: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80" },
+          ].map((recipe, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.03 }}
+              className="min-w-[300px] md:min-w-[350px] h-[500px] rounded-[2.5rem] relative overflow-hidden group cursor-pointer snap-center shadow-2xl flex-shrink-0"
+            >
+              <img src={recipe.img} alt={recipe.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#110704] via-[#110704]/20 to-transparent"></div>
+
+              <div className="absolute bottom-0 left-0 p-8 w-full">
+                <h3 className={`${syneFont} text-2xl font-bold text-white mb-2`}>{recipe.title}</h3>
+                <div className="flex items-center gap-3 text-sm text-gray-300 font-medium mb-6">
+                  <span className="flex items-center gap-1"><Clock className="size-4" /> {recipe.time}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-gray-500"></span>
+                  <span>{recipe.type}</span>
+                </div>
+                <div className="flex gap-3 opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                  <button className="bg-white text-[#2A120A] px-6 py-2.5 rounded-full text-sm font-bold w-full hover:bg-[#F05A00] hover:text-white transition-colors">
+                    View
+                  </button>
+                </div>
+              </div>
+            </motion.div>
           ))}
         </div>
       </section>
 
-      {/* ─── 5. Why ShoofEats? ─── */}
-      <section className="py-24 bg-[#FDFBF7]">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className={`${syneFont} text-4xl font-bold text-[#26150F] mb-16`}>Why ShoofEats?</h2>
+      {/* 5. Why ShoofEats (Bento Grid) */}
+      <section className="py-32 bg-[#F8F4EC]">
+        <div className="max-w-7xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className={`${syneFont} text-5xl font-bold text-[#2A120A] mb-4`}>Why Choose Us</h2>
+            <p className="text-[#5D4037] text-lg max-w-2xl mx-auto">Everything you need to master your kitchen, designed with simplicity and elegance in mind.</p>
+          </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-12">
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-[#FFE0B2] rounded-2xl flex items-center justify-center mb-6 rotate-3">
-                <Compass className="size-8 text-[#E65100]" />
-              </div>
-              <h3 className={`${syneFont} text-xl font-bold text-[#26150F] mb-3`}>Discover Recipes</h3>
-              <p className="text-[#5D4037]">Explore hundreds of food & drink ideas curated for your taste.</p>
-            </div>
+          <div className="grid md:grid-cols-3 gap-6 auto-rows-[250px]">
 
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-[#C8E6C9] rounded-2xl flex items-center justify-center mb-6 -rotate-3">
-                <Bookmark className="size-8 text-green-600" />
+            {/* Bento 1: Big Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              whileHover={{ translateY: -5 }}
+              className="md:col-span-2 bg-white rounded-[2rem] p-10 flex flex-col justify-between shadow-sm border border-gray-100 relative overflow-hidden group"
+            >
+              <div className="relative z-10 w-2/3">
+                <div className="w-12 h-12 bg-[#FFD9B8] rounded-xl flex items-center justify-center mb-6">
+                  <Search className="size-6 text-[#F05A00]" />
+                </div>
+                <h3 className={`${syneFont} text-2xl font-bold text-[#2A120A] mb-3`}>Smart AI Ingredient Search</h3>
+                <p className="text-[#5D4037] font-medium leading-relaxed">Tell us what's in your fridge, and our AI will generate the perfect recipe for you instantly.</p>
               </div>
-              <h3 className={`${syneFont} text-xl font-bold text-[#26150F] mb-3`}>Save Favorites</h3>
-              <p className="text-[#5D4037]">Build your personal cookbook and never lose a great recipe again.</p>
-            </div>
+              <div className="absolute right-0 bottom-0 w-1/2 h-full opacity-20 group-hover:opacity-40 transition-opacity bg-gradient-to-l from-[#FFD9B8] to-transparent"></div>
+            </motion.div>
 
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-[#FFCDD2] rounded-2xl flex items-center justify-center mb-6 rotate-6">
-                <ChefHat className="size-8 text-red-500" />
+            {/* Bento 2 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              whileHover={{ translateY: -5 }}
+              className="bg-[#2A120A] rounded-[2rem] p-10 flex flex-col justify-between shadow-xl relative overflow-hidden"
+            >
+              <div className="relative z-10">
+                <div className="w-12 h-12 bg-white/10 backdrop-blur rounded-xl flex items-center justify-center mb-6">
+                  <Bookmark className="size-6 text-white" />
+                </div>
+                <h3 className={`${syneFont} text-2xl font-bold text-white mb-3`}>Save Favorites</h3>
+                <p className="text-gray-400 font-medium">Build your personal digital cookbook.</p>
               </div>
-              <h3 className={`${syneFont} text-xl font-bold text-[#26150F] mb-3`}>Share Your Recipe</h3>
-              <p className="text-[#5D4037]">Upload and manage your own recipes easily to share with the world.</p>
-            </div>
+            </motion.div>
+
+            {/* Bento 3 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              whileHover={{ translateY: -5 }}
+              className="bg-white rounded-[2rem] p-10 flex flex-col justify-between shadow-sm border border-gray-100"
+            >
+              <div>
+                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-6">
+                  <Users className="size-6 text-blue-500" />
+                </div>
+                <h3 className={`${syneFont} text-2xl font-bold text-[#2A120A] mb-3`}>Share Recipes</h3>
+                <p className="text-[#5D4037] font-medium">Upload and share with the world.</p>
+              </div>
+            </motion.div>
+
+            {/* Bento 4: Wide Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              whileHover={{ translateY: -5 }}
+              className="md:col-span-2 bg-gradient-to-br from-[#F05A00] to-[#E65100] rounded-[2rem] p-10 flex flex-col justify-between shadow-lg relative overflow-hidden text-white"
+            >
+              <div className="relative z-10 w-2/3">
+                <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center mb-6">
+                  <ChefHat className="size-6 text-white" />
+                </div>
+                <h3 className={`${syneFont} text-2xl font-bold text-white mb-3`}>Personalized For You</h3>
+                <p className="text-white/80 font-medium">Your feed adapts to your taste preferences, dietary restrictions, and favorite cuisines over time.</p>
+              </div>
+              <div className="absolute -right-10 -bottom-10 opacity-30 text-white">
+                <TrendingUp className="w-64 h-64" />
+              </div>
+            </motion.div>
+
           </div>
         </div>
       </section>
 
-      {/* ─── 6 & 7. Features & Showcase UI ─── */}
-      <section className="py-24 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left Features Text */}
-          <div>
-            <h2 className={`${syneFont} text-4xl font-bold text-[#26150F] mb-6 leading-tight`}>
-              Manage Your Recipes <br /> <span className="text-[#E65100]">Like a Pro</span>
+      {/* 6. Dashboard Mockup Showcase */}
+      <section className="py-32 bg-white overflow-hidden border-y border-gray-100">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center">
+
+          {/* Text */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className={`${syneFont} text-4xl md:text-5xl font-bold text-[#2A120A] mb-8 leading-tight tracking-tight`}>
+              Manage Your Recipes <br /> <span className="text-[#F05A00]">Like a Pro</span>
             </h2>
-            <p className="text-lg text-[#5D4037] mb-8">
-              Create, edit, organize, and save recipes effortlessly. Built with modern tools to give you the best experience.
+            <p className="text-lg text-[#5D4037] mb-10 font-medium leading-relaxed">
+              Create, edit, organize, and save recipes effortlessly. Built with modern tools to give you the best cooking experience.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-              {['Smart Search', 'Save Recipes', 'Upload Recipes', 'Easy CRUD', 'Favorite List', 'Personalized Cookbook'].map((feature) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4">
+              {['Smart Search', 'Nutrition Facts', 'Upload Recipes', 'Grocery Lists', 'Favorite List', 'Meal Planner'].map((feature) => (
                 <div key={feature} className="flex items-center gap-3">
-                  <div className="bg-green-100 p-1 rounded-full">
-                    <CheckCircle2 className="size-4 text-green-600" />
+                  <div className="bg-[#FFD9B8]/50 p-1.5 rounded-full">
+                    <CheckCircle2 className="size-4 text-[#F05A00]" />
                   </div>
-                  <span className="font-semibold text-[#3E2723]">{feature}</span>
+                  <span className="font-bold text-[#2A120A]">{feature}</span>
                 </div>
               ))}
             </div>
+          </motion.div>
 
-            <button className="bg-[#26150F] text-white px-8 py-3.5 rounded-full text-sm font-bold shadow-xl hover:bg-[#E65100] transition-colors">
-              Start Cooking
-            </button>
-          </div>
-
-          {/* Right Dashboard Mockup */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-[#FFE0B2] rounded-[3rem] rotate-6 scale-105 z-0"></div>
-            <div className="relative z-10 bg-white border-8 border-gray-100 rounded-[2rem] shadow-2xl overflow-hidden aspect-[4/3]">
-              {/* Fake Dashboard Header */}
-              <div className="bg-gray-50 border-b border-gray-200 p-4 flex items-center justify-between">
-                <div className="flex gap-2">
-                  <div className="size-3 rounded-full bg-red-400"></div>
-                  <div className="size-3 rounded-full bg-amber-400"></div>
-                  <div className="size-3 rounded-full bg-green-400"></div>
-                </div>
-                <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Dashboard</div>
-                <div className="size-6 bg-gray-200 rounded-full"></div>
+          {/* Realistic Fake UI */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="relative"
+          >
+            <div className="bg-[#F8F4EC] rounded-[2.5rem] p-8 shadow-[0_30px_60px_rgba(0,0,0,0.08)] border border-white/60 relative z-10 w-full max-w-lg mx-auto">
+              {/* Header */}
+              <div className="flex justify-between items-center mb-8">
+                <h3 className={`${syneFont} font-bold text-2xl text-[#2A120A]`}>My Recipes</h3>
+                <button className="bg-[#2A120A] text-white p-2 rounded-xl"><Plus className="size-5" /></button>
               </div>
-              {/* Fake Dashboard Content */}
-              <div className="p-6 flex flex-col gap-4">
-                <div className="h-8 w-48 bg-gray-200 rounded-lg"></div>
-                <div className="flex gap-4">
-                  <div className="h-32 w-32 bg-gray-100 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center">
-                    <Plus className="text-gray-400" />
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-4 mb-8">
+                {[{ l: 'Recipes', v: '24' }, { l: 'Favorites', v: '108' }, { l: 'Saved', v: '67' }].map(s => (
+                  <div key={s.l} className="bg-white rounded-2xl p-4 text-center shadow-sm">
+                    <p className="text-xs font-bold text-gray-400 mb-1">{s.l}</p>
+                    <p className={`${syneFont} text-2xl font-black text-[#2A120A]`}>{s.v}</p>
                   </div>
-                  <div className="h-32 flex-1 bg-gray-100 rounded-xl relative overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1495474472201-416e511c750f?auto=format&fit=crop&w=300&q=80" alt="Mock" className="w-full h-full object-cover opacity-80" />
-                    <div className="absolute bottom-2 left-2 bg-white px-2 py-1 rounded text-[10px] font-bold">Coffee Setup</div>
+                ))}
+              </div>
+
+              {/* List */}
+              <div className="space-y-4">
+                {[
+                  { n: 'Coffee Setup', t: 'Drink', img: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=100&q=80' },
+                  { n: 'Chicken Katsu', t: 'Food', img: 'https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?auto=format&fit=crop&w=100&q=80' },
+                  { n: 'Avocado Toast', t: 'Healthy', img: 'https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?auto=format&fit=crop&w=100&q=80' },
+                ].map(item => (
+                  <div key={item.n} className="flex items-center gap-4 bg-white p-3 rounded-2xl shadow-sm cursor-pointer hover:bg-gray-50 transition-colors">
+                    <img src={item.img} className="w-14 h-14 rounded-xl object-cover" alt={item.n} />
+                    <div>
+                      <h4 className="font-bold text-[#2A120A] text-sm">{item.n}</h4>
+                      <p className="text-xs text-gray-500 font-medium">{item.t}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="h-4 w-full bg-gray-100 rounded-full mt-4"></div>
-                <div className="h-4 w-3/4 bg-gray-100 rounded-full"></div>
+                ))}
               </div>
             </div>
 
-            {/* Floating Element */}
-            <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl z-20 border border-gray-100 flex items-center gap-4">
-              <div className="bg-amber-100 p-3 rounded-xl"><Coffee className="size-6 text-amber-600" /></div>
+            {/* Floating Toast */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, type: 'spring' }}
+              viewport={{ once: true }}
+              className="absolute -bottom-6 -left-6 md:-left-12 bg-[#2A120A] text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 z-20"
+            >
+              <div className="bg-green-500/20 p-2 rounded-full">
+                <CheckCircle2 className="size-5 text-green-400" />
+              </div>
               <div>
                 <p className="text-sm font-bold">Recipe Added!</p>
-                <p className="text-xs text-gray-500">Just now</p>
+                <p className="text-xs text-gray-400">Successfully saved to your list.</p>
               </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 7. Featured Creator */}
+      <section className="py-24 bg-[#F8F4EC]">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h2 className={`${syneFont} text-4xl font-bold text-[#2A120A] mb-12`}>Chef of the Week</h2>
+
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="max-w-2xl mx-auto bg-white rounded-[3rem] p-8 md:p-12 shadow-xl flex flex-col md:flex-row items-center gap-8 text-left relative overflow-hidden"
+          >
+            <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=300&q=80" alt="Chef" className="w-40 h-40 rounded-full object-cover shadow-lg border-4 border-white" />
+            <div>
+              <h3 className={`${syneFont} text-3xl font-bold text-[#2A120A] mb-2`}>Shoofy Liana</h3>
+              <p className="text-[#F05A00] font-bold text-sm mb-4">Pastry Expert • 124 Recipes</p>
+              <p className="text-[#5D4037] font-medium mb-6 italic">"Baking is both an art and a science. I love sharing my family secrets with the ShoofEats community."</p>
+              <button className="text-sm font-bold bg-[#F8F4EC] text-[#2A120A] px-6 py-2 rounded-full hover:bg-[#FFD9B8] transition-colors">
+                View Profile
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 8. CTA */}
+      <section className="py-32 relative overflow-hidden bg-[#2A120A]">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className={`${syneFont} text-5xl md:text-7xl font-black text-white mb-8 tracking-tight`}
+          >
+            Cook smarter.<br />
+            Eat better.<br />
+            <span className="text-[#F05A00]">Discover flavors you’ll love.</span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-xl text-gray-400 mb-12 font-medium"
+          >
+            Your next favorite recipe is waiting inside ShoofEats. Join our community today.
+          </motion.p>
+
+          <motion.button
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="bg-[#F05A00] text-white px-10 py-5 rounded-full text-lg font-bold shadow-xl hover:shadow-[0_0_40px_rgba(240,90,0,0.4)] transition-all"
+          >
+            Get Started For Free
+          </motion.button>
+        </div>
+      </section>
+
+      {/* 9. Footer */}
+      <footer className="bg-white py-20 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12">
+          <div className="md:col-span-1">
+            <a href="#" className={`${syneFont} text-3xl font-bold tracking-tight text-[#F05A00] block mb-6`}>
+              ShoofEats.
+            </a>
+            <p className="text-gray-500 font-medium mb-8">The modern platform for food discovery and personalized cooking experiences.</p>
+            <div className="flex gap-4">
+              <a href="#" className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-[#2A120A] hover:bg-[#F05A00] hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+              </a>
+              <a href="#" className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-[#2A120A] hover:bg-[#F05A00] hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+              </a>
+              <a href="#" className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-[#2A120A] hover:bg-[#F05A00] hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-[#2A120A] mb-6">Explore</h4>
+            <ul className="space-y-4 font-medium text-gray-500">
+              <li><a href="#" className="hover:text-[#F05A00] transition-colors">Recipes</a></li>
+              <li><a href="#" className="hover:text-[#F05A00] transition-colors">Drinks</a></li>
+              <li><a href="#" className="hover:text-[#F05A00] transition-colors">Trending</a></li>
+              <li><a href="#" className="hover:text-[#F05A00] transition-colors">Chef of the Week</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-[#2A120A] mb-6">Company</h4>
+            <ul className="space-y-4 font-medium text-gray-500">
+              <li><a href="#" className="hover:text-[#F05A00] transition-colors">About Us</a></li>
+              <li><a href="#" className="hover:text-[#F05A00] transition-colors">Careers</a></li>
+              <li><a href="#" className="hover:text-[#F05A00] transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-[#F05A00] transition-colors">Terms of Service</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-[#2A120A] mb-6">Get Weekly Recipes</h4>
+            <p className="text-gray-500 font-medium mb-4">Join 50,000+ subscribers cooking better meals.</p>
+            <div className="flex gap-2">
+              <input type="email" placeholder="Email address" className="bg-gray-100 px-4 py-3 rounded-xl w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#F05A00]" />
+              <button className="bg-[#2A120A] text-white p-3 rounded-xl hover:bg-[#F05A00] transition-colors"><ArrowUpRight className="size-5" /></button>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* ─── 8. Stats ─── */}
-      <section className="py-16 bg-[#26150F] text-white border-y border-white/10">
-        <div className="max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-white/20">
-          <div className="py-4">
-            <h3 className={`${syneFont} text-5xl font-bold mb-2 text-[#E65100]`}>500+</h3>
-            <p className="text-gray-400 font-medium">Recipes Available</p>
-          </div>
-          <div className="py-4">
-            <h3 className={`${syneFont} text-5xl font-bold mb-2 text-[#E65100]`}>2K+</h3>
-            <p className="text-gray-400 font-medium">Saved to Cookbooks</p>
-          </div>
-          <div className="py-4">
-            <h3 className={`${syneFont} text-5xl font-bold mb-2 text-[#E65100]`}>100+</h3>
-            <p className="text-gray-400 font-medium">Drink Mixes</p>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── 9. CTA ─── */}
-      <section className="py-24 bg-[#FFE0B2]/30">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className={`${syneFont} text-4xl md:text-5xl font-bold text-[#26150F] mb-6`}>
-            Ready to discover your next favorite dish?
-          </h2>
-          <p className="text-lg text-[#5D4037] mb-10">
-            Join thousands of food lovers and start building your personalized cookbook today.
-          </p>
-          <button className="bg-[#E65100] text-white px-10 py-4 rounded-full text-lg font-bold shadow-xl shadow-[#E65100]/20 hover:scale-105 transition-transform">
-            Start your cooking journey
-          </button>
-        </div>
-      </section>
-
-      {/* ─── 10. Footer ─── */}
-      <footer className="bg-white py-12 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div>
-            <a href="#" className={`${syneFont} text-2xl font-bold tracking-tight text-[#E65100]`}>
-              ShoofEats.
-            </a>
-            <p className="text-sm text-gray-500 mt-2">© 2026 ShoofEats. All rights reserved.</p>
-          </div>
-
-          <div className="flex gap-8 text-sm font-semibold text-[#5D4037]">
-            <a href="#" className="hover:text-[#E65100] transition-colors">Explore</a>
-            <a href="#" className="hover:text-[#E65100] transition-colors">Recipes</a>
-            <a href="#" className="hover:text-[#E65100] transition-colors">Drinks</a>
-            <a href="#" className="hover:text-[#E65100] transition-colors">About</a>
-          </div>
-
-          <div className="flex gap-4">
-            <a href="#" className="text-gray-400 hover:text-[#E65100] transition-colors">Instagram</a>
-            <a href="#" className="text-gray-400 hover:text-[#E65100] transition-colors">Github</a>
-            <a href="#" className="text-gray-400 hover:text-[#E65100] transition-colors">Contact</a>
-          </div>
+        <div className="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-gray-100 text-center text-sm font-medium text-gray-400">
+          © {new Date().getFullYear()} ShoofEats. All rights reserved.
         </div>
       </footer>
-
-    </div>
+    </main>
   );
 }
