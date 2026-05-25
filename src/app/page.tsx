@@ -3,15 +3,26 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Search, Compass, BookOpen, Coffee, Heart, ArrowRight, CheckCircle2, PlayCircle, Star, Clock, ChefHat, Bookmark, Plus, TrendingUp, Users, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { createClient } from "@/utils/supabase/client";
 
 export default function ShoofEatsLanding() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const supabase = createClient();
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
+
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+    checkUser();
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -56,15 +67,19 @@ export default function ShoofEatsLanding() {
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-6">
-            <a href="#" className="text-sm font-semibold text-[#2A120A] hover:text-[#F05A00] transition-colors">Login</a>
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className="bg-[#2A120A] text-white px-6 py-2.5 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl hover:bg-[#1a0a05] transition-all"
-            >
-              Start Cooking
-            </motion.button>
+          <div className="hidden md:flex items-center gap-6">
+            {user ? (
+              <Link href="/dashboard" className="bg-[#2A120A] text-white px-6 py-2.5 rounded-full font-bold hover:bg-[#1a0a05] transition-colors shadow-lg hover:shadow-xl">
+                Go to Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" className="font-bold text-[#2A120A] hover:text-[#F05A00] transition-colors">Log In</Link>
+                <Link href="/register" className="bg-[#2A120A] text-white px-6 py-2.5 rounded-full font-bold hover:bg-[#1a0a05] transition-colors shadow-lg hover:shadow-xl">
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </motion.nav>
